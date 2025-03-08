@@ -1,20 +1,36 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from "react";
+import { StyleSheet } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { NavigationContainer } from "@react-navigation/native";
+import MainNavigation from "./src/navigation/MainNavigation/MainNavigation";
+import Splash from "./src/screens/Splash";
 
+const queryClient = new QueryClient();
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true);
+  const handleSplashFinish = () => {
+    setShowSplash(false);
+  };
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+    <QueryClientProvider style={styles.container} client={queryClient}>
+      <NavigationContainer>
+        {showSplash ? (
+          <Splash onFinish={handleSplashFinish} />
+        ) : (
+          <MainNavigation />
+        )}
+      </NavigationContainer>
       <StatusBar style="auto" />
-    </View>
+    </QueryClientProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#071B3B",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

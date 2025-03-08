@@ -1,0 +1,297 @@
+C:.
+├───.expo
+├───assets
+│   ├───logo_animated.mp4
+│   └───splash-icon.png
+├───App.js
+└───src
+    ├───api
+    │   ├───auth.js
+    │   ├───index.js
+    │   └───storage.js
+    ├───components
+    │   └───SplashScreen.js
+    ├───context
+    │   └───UserContext.js
+    ├───data
+    ├───navigation
+    │   ├───AuthNavigation
+    │   │   └───AuthNavigation.js
+    │   ├───HomeNavigation
+    │   │   └───HomeNavigation.js
+    │   ├───MainNavigation
+    │   │   └───MainNavigation.js
+    │   └───SplashNavigation
+    │       └───SplashNavigation.js
+    └───screens
+        ├───Home.js
+        ├───Login.js
+        ├───Register.js
+        └───Splash.js
+
+
+
+
+
+
+
+
+
+
+Now let's start with every set up. I'll show what I did so you can understand:
+
+Tree:
+C:.
+├───.expo
+├───assets
+│   ├───logo_animated.mp4
+│   └───splash-icon.png
+├───App.js
+└───src
+    ├───api
+    │   ├───auth.js
+    │   ├───index.js
+    │   └───storage.js
+    ├───components
+    │   └───SplashScreen.js
+    ├───context
+    │   └───UserContext.js
+    ├───data
+    ├───navigation
+    │   ├───AuthNavigation
+    │   │   └───AuthNavigation.js
+    │   ├───HomeNavigation
+    │   │   └───HomeNavigation.js
+    │   ├───MainNavigation
+    │   │   └───MainNavigation.js
+    │   └───SplashNavigation
+    │       └───SplashNavigation.js
+    └───screens
+        ├───Home.js
+        ├───Login.js
+        ├───Register.js
+        └───Splash.js
+Files:
+C:\Users\Alex3\ABK-Git\hr-rn-app\src\components\SplashScreen.js:
+`// src/components/AnimatedGradientBackground.js
+import React, { useEffect, useRef } from "react";
+import { StyleSheet, Animated } from "react-native";
+import LinearGradient from "react-native-linear-gradient";
+
+const AnimatedGradientBackground = () => {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 3000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 3000,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [fadeAnim]);
+
+  const opacity1 = fadeAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 0], // First gradient fades out
+  });
+
+  const opacity2 = fadeAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 1], // Second gradient fades in
+  });
+
+  return (
+    <>
+      <Animated.View style={[styles.gradientContainer, { opacity: opacity1 }]}>
+        <LinearGradient
+          colors={["#000814", "#001D3D", "#003566"]}
+          style={styles.gradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        />
+      </Animated.View>
+      <Animated.View style={[styles.gradientContainer, { opacity: opacity2 }]}>
+        <LinearGradient
+          colors={["#003566", "#FFC300", "#FFD60A"]}
+          style={styles.gradient}
+          start={{ x: 0, y: 1 }}
+          end={{ x: 1, y: 0 }}
+        />
+      </Animated.View>
+    </>
+  );
+};
+
+const styles = StyleSheet.create({
+  gradientContainer: {
+    ...StyleSheet.absoluteFillObject, // Fills the parent container
+  },
+  gradient: {
+    flex: 1,
+  },
+});
+
+export default AnimatedGradientBackground;
+`
+
+C:\Users\Alex3\ABK-Git\hr-rn-app\src\navigation\AuthNavigation\AuthNavigation.js:
+`import { StyleSheet } from "react-native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React from "react";
+import Login from "../../screens/Login";
+import Register from "../../screens/Register";
+
+const Stack = createNativeStackNavigator();
+const AuthNavigation = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Login"
+        component={Login}
+        headerBackButtonMenuEnabled="false"
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Register"
+        component={Register}
+        headerBackButtonMenuEnabled="false"
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+export default AuthNavigation;
+
+const styles = StyleSheet.create({});
+`
+
+C:\Users\Alex3\ABK-Git\hr-rn-app\src\navigation\HomeNavigation\HomeNavigation.js:
+`import { StyleSheet, Text, View } from 'react-native'
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React from 'react'
+
+const HomeNavigation = () => {
+  return (
+    <View>
+      <Text>HomeNavigation</Text>
+    </View>
+  )
+}
+
+export default HomeNavigation
+
+const styles = StyleSheet.create({})`
+
+C:\Users\Alex3\ABK-Git\hr-rn-app\src\navigation\MainNavigation\MainNavigation.js:
+`import { StyleSheet } from "react-native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import React from "react";
+import HomeNavigation from "../HomeNavigation/HomeNavigation";
+import AuthNavigation from "../AuthNavigation/AuthNavigation";
+import SplashNavigation from "../SplashNavigation/SplashNavigation";
+
+const Tab = createBottomTabNavigator();
+const MainNavigation = () => {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen
+        name="Splash"
+        component={SplashNavigation}
+        options={
+          {
+            // tabBarIcon: ({ color }) => (),
+          }
+        }
+      />
+      <Tab.Screen
+        name="Auth"
+        component={AuthNavigation}
+        options={
+          {
+            // tabBarIcon: ({ color }) => (),
+          }
+        }
+      />
+      <Tab.Screen
+        name="Home"
+        component={HomeNavigation}
+        options={
+          {
+            // tabBarIcon: ({ color }) => (),
+          }
+        }
+      />
+    </Tab.Navigator>
+  );
+};
+
+export default MainNavigation;
+
+const styles = StyleSheet.create({});
+`
+
+C:\Users\Alex3\ABK-Git\hr-rn-app\src\navigation\SplashNavigation\SplashNavigation.js:
+`import { StyleSheet, Text, View } from "react-native";
+import React from "react";
+import Splash from "../../screens/Splash";
+
+const Stack = createNativeStackNavigator();
+const SplashNavigation = () => {
+  return (
+    <View>
+      <Text>SplashNavigation</Text>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Splash"
+          component={Splash}
+          headerBackButtonMenuEnabled="false"
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
+    </View>
+  );
+};
+
+export default SplashNavigation;
+
+const styles = StyleSheet.create({});
+`
+
+C:\Users\Alex3\ABK-Git\hr-rn-app\src\screens\Splash.js:
+`import { StyleSheet, View } from "react-native";
+import React from "react";
+import { Video } from "expo-av";
+
+const Splash = () => {
+  return (
+    <View>
+      <Video
+        source={require("./assets/logo_animated.mp4")} // Same path
+        style={styles.video}
+        isMuted={true} // Muted
+        isLooping={true} // Loops indefinitely (use false to play once)
+        resizeMode="cover" // Fills the screen
+        shouldPlay // Starts playing automatically
+      />
+    </View>
+  );
+};
+
+export default Splash;
+
+const styles = StyleSheet.create({
+  video: {
+    width: "100%",
+    height: "100%",
+  },
+});
+`
