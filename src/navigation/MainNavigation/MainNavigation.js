@@ -9,22 +9,24 @@ const MainNavigation = () => {
   return (
     <Tab.Navigator initialRouteName="Auth">
       <Tab.Screen
-        name="Auth"
-        component={AuthNavigation}
-        options={
-          {
-            // tabBarIcon: ({ color }) => (),
-          }
-        }
-      />
-      <Tab.Screen
         name="Home"
         component={HomeNavigation}
-        options={
-          {
-            // tabBarIcon: ({ color }) => (),
-          }
-        }
+        options={{
+          // tabBarIcon: ({ color }) => (),
+          headerShown: false,
+        }}
+      />
+      <Tab.Screen
+        name="Auth"
+        component={AuthNavigation}
+        screenOptions={{
+          tabBarShowLabel: false,
+          headerShown: false,
+        }}
+        options={{
+          // tabBarIcon: ({ color }) => (),
+          headerShown: false,
+        }}
       />
     </Tab.Navigator>
   );

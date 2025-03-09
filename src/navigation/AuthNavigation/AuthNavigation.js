@@ -14,12 +14,12 @@ const AuthNavigation = () => {
         headerBackButtonMenuEnabled="false"
         options={{ headerShown: false }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name="Register"
         component={Register}
         headerBackButtonMenuEnabled="false"
         options={{ headerShown: false }}
-      />
+      /> */}
     </Stack.Navigator>
   );
 };

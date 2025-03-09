@@ -21,8 +21,9 @@ export default function App() {
         ) : (
           <MainNavigation />
         )}
+        {/* <MainNavigation /> */}
       </NavigationContainer>
-      <StatusBar style="auto" />
+      <StatusBar style="inverted" />
     </QueryClientProvider>
   );
 }
