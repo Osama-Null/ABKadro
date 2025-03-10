@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NavigationContainer } from "@react-navigation/native";
 import MainNavigation from "./src/navigation/MainNavigation/MainNavigation";
 import Splash from "./src/screens/Splash";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 const queryClient = new QueryClient();
 export default function App() {
@@ -19,7 +20,11 @@ export default function App() {
         {showSplash ? (
           <Splash onFinish={handleSplashFinish} />
         ) : (
-          <MainNavigation />
+          <SafeAreaProvider>
+            <SafeAreaView style={{ flex: 1, backgroundColor: "#071B3B" }}>
+              <MainNavigation />
+            </SafeAreaView>
+          </SafeAreaProvider>
         )}
         {/* <MainNavigation /> */}
       </NavigationContainer>

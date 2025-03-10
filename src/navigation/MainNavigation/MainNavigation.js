@@ -3,28 +3,32 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React from "react";
 import HomeNavigation from "../HomeNavigation/HomeNavigation";
 import AuthNavigation from "../AuthNavigation/AuthNavigation";
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FaqNavigation from "../FaqNavigation/FaqNavigation";
 import AllReqHistNavigation from "../AllReqHistNavigation/AllReqHistNavigation";
 import ServicesNavigation from "../ServicesNavigation/ServicesNavigation";
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 const Tab = createBottomTabNavigator();
 const MainNavigation = () => {
   return (
     <Tab.Navigator
-    screenOptions={{
-      headerShown: false,
-      headerShadowVisible: false,
-      tabBarActiveTintColor: "#FFC300",
-      tabBarInactiveTintColor: "#003566",
-      tabBarStyle: {
-        gap: 200,
-      }
-    }}
-  >
+      screenOptions={{
+        headerShown: false,
+        headerShadowVisible: false,
+        tabBarActiveTintColor: "#FFC300",
+        tabBarInactiveTintColor: "white",
+        tabBarStyle: {
+          gap: 200,
+          position: "absolute",
+          bottom: -30,
+          backgroundColor:"FFC300",
+          borderTopWidth: 0,
+        },
+      }}
+    >
       <Tab.Screen
         name="HomeNavigation"
         component={HomeNavigation}
@@ -40,7 +44,11 @@ const MainNavigation = () => {
         component={ServicesNavigation}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="home-repair-service" size={size} color={color} />
+            <MaterialIcons
+              name="home-repair-service"
+              size={size}
+              color={color}
+            />
           ),
           tabBarLabel: "Service",
         }}
@@ -52,11 +60,11 @@ const MainNavigation = () => {
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="account" size={size} color={color} />
           ),
-          tabBarLabel: "Profile",
+          tabBarLabel: "Login",
         }}
       />
 
-<Tab.Screen
+      <Tab.Screen
         name="AllReqHistNavigation"
         component={AllReqHistNavigation}
         options={{
@@ -67,18 +75,20 @@ const MainNavigation = () => {
         }}
       />
 
-<Tab.Screen
+      <Tab.Screen
         name="FaqNavigation"
         component={FaqNavigation}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="frequently-asked-questions" size={size} color={color} />
+            <MaterialCommunityIcons
+              name="frequently-asked-questions"
+              size={size}
+              color={color}
+            />
           ),
           tabBarLabel: "FAQ",
         }}
       />
-
-
     </Tab.Navigator>
   );
 };
