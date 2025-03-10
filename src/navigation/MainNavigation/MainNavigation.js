@@ -16,7 +16,7 @@ const MainNavigation = () => {
   return (
     <Tab.Navigator
     screenOptions={{
-      headerShown: true,
+      headerShown: false,
       headerShadowVisible: false,
       tabBarActiveTintColor: "#FFC300",
       tabBarInactiveTintColor: "#003566",
@@ -42,7 +42,7 @@ const MainNavigation = () => {
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="home-repair-service" size={size} color={color} />
           ),
-          tabBarLabel: "Home",
+          tabBarLabel: "Service",
         }}
       />
       <Tab.Screen
