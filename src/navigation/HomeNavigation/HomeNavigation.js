@@ -1,9 +1,10 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React from 'react';
-import HomeEmp from '../../screens/HomeEmp';
-import RequestDetails from '../../screens/RequestDetails';
-import ProfileInfo from '../../screens/ProfileInfo';
+import React from "react";
+import HomeEmp from "../../screens/HomeEmp";
+import Home from "../../screens/Home";
+import RequestDetails from "../../screens/RequestDetails";
+import ProfileInfo from "../../screens/ProfileInfo";
 
 const Stack = createNativeStackNavigator();
 const HomeNavigation = () => {
@@ -23,11 +24,12 @@ const HomeNavigation = () => {
       <Stack.Screen
         name="ProfileInfo"
         component={ProfileInfo}
+        headerBackButtonMenuEnabled="false"
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );
-}
+};
 
 export default HomeNavigation;
 
