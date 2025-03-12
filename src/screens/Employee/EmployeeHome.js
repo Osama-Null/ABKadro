@@ -9,14 +9,14 @@ import {
   FlatList,
 } from "react-native";
 import React, { useState } from "react";
-import { useNavigation } from '@react-navigation/native';
-import employees from "../data/employees";
+import { useNavigation } from "@react-navigation/native";
+import employees from "../../data/employees";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-import { Picker } from '@react-native-picker/picker';
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { Picker } from "@react-native-picker/picker";
 
-const HomeEmp = () => {
+const EmployeeHome = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filter, setFilter] = useState("All");
   const [showPicker, setShowPicker] = useState(false);
@@ -58,10 +58,14 @@ const HomeEmp = () => {
   console.log(Employees); // For debugging
 
   const filteredRequests = requests
-    .filter((req) => req.title.toLowerCase().includes(searchQuery.toLowerCase()))
+    .filter((req) =>
+      req.title.toLowerCase().includes(searchQuery.toLowerCase())
+    )
     .filter((req) => filter === "All" || req.status === filter);
 
-  const sortedRequests = [...filteredRequests].sort((a, b) => (a.status === "Pending" ? -1 : 1));
+  const sortedRequests = [...filteredRequests].sort((a, b) =>
+    a.status === "Pending" ? -1 : 1
+  );
 
   return (
     <View style={styles.container}>
@@ -105,15 +109,9 @@ const HomeEmp = () => {
               width: 50,
               height: 50,
             }}
-            onPress={() => navigation.navigate('ProfileInfo', {
-              empId: Employees[0].empId,
-              name: Employees[0].empName,
-              image: Employees[0].empImage,
-              department: Employees[0].empDepartment,
-              email: Employees[0].empEmail,
-              phone: Employees[0].empPhone,
-              position: Employees[0].empPosition,
-            })}
+            onPress={() =>
+              navigation.navigate("ProfileInfo", { employee: Employees[0] })
+            }
           >
             <Image
               source={{ uri: Employees[0].empImage }}
@@ -162,10 +160,24 @@ const HomeEmp = () => {
             renderItem={({ item }) => (
               <TouchableOpacity
                 style={styles.requestCard}
-                onPress={() => navigation.navigate('RequestDetails', { ...item, empImage: Employees[0].empImage })}
+                onPress={() =>
+                  navigation.navigate("EmployeeRequestDetails", {
+                    ...item,
+                    empImage: Employees[0].empImage,
+                  })
+                }
               >
                 <Text style={styles.requestTitle}>{item.title}</Text>
-                <Text style={[styles.status, item.status === "Accepted" ? styles.accepted : item.status === "Rejected" ? styles.rejected : styles.pending]}>
+                <Text
+                  style={[
+                    styles.status,
+                    item.status === "Accepted"
+                      ? styles.accepted
+                      : item.status === "Rejected"
+                      ? styles.rejected
+                      : styles.pending,
+                  ]}
+                >
                   {item.status}
                 </Text>
               </TouchableOpacity>
@@ -243,4 +255,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeEmp;
+export default EmployeeHome;

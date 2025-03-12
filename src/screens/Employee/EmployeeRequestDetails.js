@@ -11,9 +11,9 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import employees from "../data/employees";
 import files from "../data/files";
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
-const RequestDetails = ({ route }) => {
+const EmployeeRequestDetails = ({ route }) => {
   const {
     title,
     type,
@@ -43,17 +43,21 @@ const RequestDetails = ({ route }) => {
 
   // Function to handle icon click
   const handleIconClick = () => {
-    const requestFiles = files.find(file => file.requestId === route.params.reqId);
+    const requestFiles = files.find(
+      (file) => file.requestId === route.params.reqId
+    );
     if (requestFiles && requestFiles.messages.length > 0) {
       const firstFilePath = requestFiles.messages[0].files[0].filePath;
       console.log(`Opening file: ${firstFilePath}`);
       // Navigate to a new screen or display the file
-      navigation.navigate('FileViewer', { filePath: firstFilePath });
+      navigation.navigate("FileViewer", { filePath: firstFilePath });
     }
   };
 
   // Filter files for the current request
-  const requestFiles = files.filter(file => file.requestId === route.params.reqId);
+  const requestFiles = files.filter(
+    (file) => file.requestId === route.params.reqId
+  );
 
   return (
     <View style={styles.container}>
@@ -82,20 +86,19 @@ const RequestDetails = ({ route }) => {
             width: 50,
             height: 50,
           }}
-          onPress={() => navigation.navigate('ProfileInfo', {
-            empId,
-            name,
-            image: empImage,
-            department,
-            email,
-            phone,
-            position,
-          })}
+          onPress={() =>
+            navigation.navigate("ProfileInfo", {
+              empId,
+              name,
+              image: empImage,
+              department,
+              email,
+              phone,
+              position,
+            })
+          }
         >
-          <Image
-            source={{ uri: empImage }}
-            style={{ width: 50, height: 50 }}
-          />
+          <Image source={{ uri: empImage }} style={{ width: 50, height: 50 }} />
         </TouchableOpacity>
       </View>
 
@@ -112,7 +115,7 @@ const RequestDetails = ({ route }) => {
       </View>
 
       {/* Display Messages */}
-      {requestFiles.map((requestFile) => (
+      {requestFiles.map((requestFile) =>
         requestFile.messages.map((message) => (
           <View key={message.messageId} style={styles.messageContainer}>
             <Text style={styles.sender}>
@@ -125,13 +128,10 @@ const RequestDetails = ({ route }) => {
             </View>
           </View>
         ))
-      ))}
+      )}
 
       {/* Clickable Icon */}
-      <TouchableOpacity
-        style={styles.iconContainer}
-        onPress={handleIconClick}
-      >
+      <TouchableOpacity style={styles.iconContainer} onPress={handleIconClick}>
         <MaterialCommunityIcons name="paperclip" size={24} color="white" />
       </TouchableOpacity>
 
@@ -144,9 +144,16 @@ const RequestDetails = ({ route }) => {
             <View style={styles.fileContainer}>
               {item.messages.map((message) => (
                 <View key={message.messageId} style={styles.messageContainer}>
-                  <Text style={styles.messageText}>{message.descriptionBody}</Text>
+                  <Text style={styles.messageText}>
+                    {message.descriptionBody}
+                  </Text>
                   {message.files.map((file) => (
-                    <TouchableOpacity key={file.messageFileId} onPress={() => console.log(`Opening file: ${file.filePath}`)}>
+                    <TouchableOpacity
+                      key={file.messageFileId}
+                      onPress={() =>
+                        console.log(`Opening file: ${file.filePath}`)
+                      }
+                    >
                       <Text style={styles.fileText}>{file.fileName}</Text>
                     </TouchableOpacity>
                   ))}
@@ -217,4 +224,4 @@ const styles = StyleSheet.create({
   buttonContainer: { marginTop: 20, alignSelf: "center" },
 });
 
-export default RequestDetails;
+export default EmployeeRequestDetails;

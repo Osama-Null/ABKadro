@@ -6,25 +6,30 @@ import Home from "../../screens/Home";
 import RequestDetails from "../../screens/RequestDetails";
 import ProfileInfo from "../../screens/ProfileInfo";
 import FileViewer from "../../screens/FileViewer";
+// Screens
+import EmployeeHome from "../../../screens/Employee/EmployeeHome";
+import EmployeeRequestDetails from "../../../screens/Employee/EmployeeRequestDetails";
+import EmployeeProfileInfo from "../../../screens/Shared/ProfileInfo";
 
 const Stack = createNativeStackNavigator();
-const HomeNavigation = () => {
+
+const EmployeeHomeNavigation = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
         name="Home"
-        component={HomeEmp}
+        component={EmployeeHome}
         headerBackButtonMenuEnabled="false"
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="RequestDetails"
-        component={RequestDetails}
+        name="EmployeeRequestDetails"
+        component={EmployeeRequestDetails}
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="ProfileInfo"
-        component={ProfileInfo}
+        name="EmployeeProfileInfo"
+        component={EmployeeProfileInfo}
         headerBackButtonMenuEnabled="false"
         options={{ headerShown: false }}
       />
@@ -37,6 +42,6 @@ const HomeNavigation = () => {
   );
 };
 
-export default HomeNavigation;
+export default EmployeeHomeNavigation;
 
 const styles = StyleSheet.create({});

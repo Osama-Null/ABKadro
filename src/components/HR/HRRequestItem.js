@@ -1,5 +1,4 @@
 import {
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -9,8 +8,8 @@ import {
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 
-const RequestItem = ({
-  key,
+const HRRequestItem = ({
+  reqId,
   reqEmployeeId,
   reqHrReviewerId,
   reqType,
@@ -19,13 +18,34 @@ const RequestItem = ({
   reqReviewedDate,
   reqDetails,
   reqComments,
+  //-------------------
+  empName,
+  empImage,
+  empDepartment,
+  empPosition,
 }) => {
   const navigation = useNavigation();
   return (
     <TouchableOpacity
       onPress={() =>
-        navigation.navigate("RequestDetails", {
-          requestId: key,
+        navigation.navigate("HRRequestDetails", {
+          request: {
+            id: reqId,
+            employeeId: reqEmployeeId,
+            type: reqType,
+            status: reqStatus,
+            submittedDate: reqSubmittedDate,
+            reviewedDate: reqReviewedDate,
+            details: reqDetails,
+            comments: reqComments,
+            hrReviewerId: reqHrReviewerId,
+          },
+          employee: {
+            name: empName,
+            image: empImage,
+            department: empDepartment,
+            position: empPosition,
+          },
         })
       }
     >
@@ -34,12 +54,13 @@ const RequestItem = ({
           flex: 1,
           flexDirection: "row",
           gap: 10,
-          backgroundColor: "#001D3D",
           borderRadius: 5,
           height: 70,
           alignItems: "center",
           justifyContent: "center",
           padding: 10,
+          borderBottomWidth: 1,
+          borderBottomColor: "#001D3D"
         }}
       >
         <View
@@ -77,7 +98,7 @@ const RequestItem = ({
                 fontFamily: "Roboto",
               }}
             >
-              {Employees[0].empName}
+              {empName}
             </Text>
             <Text
               style={{
@@ -99,11 +120,11 @@ const RequestItem = ({
               fontFamily: "Roboto",
             }}
           >
-            {Employees[0].empDepartment} - {Employees[0].empPosition}
+            {empDepartment} - {empPosition}
           </Text>
           <Text
             style={{
-              color: "white",
+              color: "orange",
               fontSize: 13,
               fontWeight: "bold",
             }}
@@ -116,6 +137,6 @@ const RequestItem = ({
   );
 };
 
-export default RequestItem;
+export default HRRequestItem;
 
 const styles = StyleSheet.create({});
