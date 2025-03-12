@@ -9,8 +9,8 @@ import {
   FlatList,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import employees from "../data/employees";
-import files from "../data/files";
+import employees from "../../data/employees";
+import files from "../../data/files";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 
 const EmployeeRequestDetails = ({ route }) => {
@@ -30,6 +30,33 @@ const EmployeeRequestDetails = ({ route }) => {
   } = route.params;
   const navigation = useNavigation();
 
+  const Employees = employees.map((employee) => ({
+    empId: employee.id,
+    empName: employee.name,
+    empImage: employee.image,
+    empRating: employee.rating,
+    empDepartment: employee.department,
+    empHireDate: employee.hireDate,
+    empEmail: employee.contactInfo.email,
+    empPhone: employee.contactInfo.phone,
+    empPosition: employee.position,
+    empDescription: employee.description,
+    empStatus: employee.status,
+    empSkills: employee.skills.map((skill) => ({
+      skillId: skill.id,
+      skillName: skill.name,
+      skillProficiency: skill.proficiency,
+      skillYearsExperience: skill.yearsExperience,
+    })),
+    empHrSpecific: employee.hrSpecific
+      ? {
+          certifications: employee.hrSpecific.certifications,
+          yearsInHR: employee.hrSpecific.yearsInHR,
+          specialties: employee.hrSpecific.specialties,
+        }
+      : null,
+  }));
+
   // Get the current date
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString("en-US", {
@@ -44,7 +71,7 @@ const EmployeeRequestDetails = ({ route }) => {
   // Function to handle icon click
   const handleIconClick = () => {
     const requestFiles = files.find(
-      (file) => file.requestId === route.params.reqId
+      (file) => file.requestId === route.params.id
     );
     if (requestFiles && requestFiles.messages.length > 0) {
       const firstFilePath = requestFiles.messages[0].files[0].filePath;
@@ -56,7 +83,7 @@ const EmployeeRequestDetails = ({ route }) => {
 
   // Filter files for the current request
   const requestFiles = files.filter(
-    (file) => file.requestId === route.params.reqId
+    (file) => file.requestId === route.params.id
   );
 
   return (
@@ -88,13 +115,7 @@ const EmployeeRequestDetails = ({ route }) => {
           }}
           onPress={() =>
             navigation.navigate("ProfileInfo", {
-              empId,
-              name,
-              image: empImage,
-              department,
-              email,
-              phone,
-              position,
+              employee: Employees[0],
             })
           }
         >

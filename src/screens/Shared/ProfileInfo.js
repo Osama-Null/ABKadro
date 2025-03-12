@@ -57,7 +57,6 @@ const ProfileInfo = ({ route }) => {
       </View>
 
       <View style={styles.container}>
-
         <View
           style={{
             flexDirection: "row",
