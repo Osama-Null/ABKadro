@@ -7,12 +7,26 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 // import { UserProvider, UserContext } from "./context/UserContext";
 import { RequestsProvider } from "./src/context/RequestsContext";
 import EmployeeNavigation from "./src/navigation/Employee/EmployeeNavigation";
-import HRNavigation from "./src/navigation/HR/HRNavigation";
 import Login from "./src/screens/Shared/Login";
 import { createStackNavigator } from "@react-navigation/stack";
+import HRNavigation from "./src/navigation/HR/HRNavigation";
 
 const queryClient = new QueryClient();
 const Stack = createStackNavigator();
+
+// const RoleBasedNavigator = () => {
+//   const { isAuth, user } = useContext(UserContext);
+//   const isHR = user?.role === "Admin"; // "Admin" is HR per backend data
+
+//   if (!isAuth) {
+//     return <Login />;
+//   } else if (isHR) {
+//     return <HRNavigation />;
+//   } else {
+//     return <EmployeeNavigation />;
+//   }
+// };
+
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
   const handleSplashFinish = () => {
@@ -29,7 +43,13 @@ export default function App() {
             <SafeAreaProvider>
               <SafeAreaView style={{ flex: 1, backgroundColor: "#071B3B" }}>
                 <Stack.Navigator screenOptions={{ headerShown: false }}>
+                  {/* ============================================= Starting ============================================= */}
+                  {/* <Stack.Screen
+                    name="EmployeeNavigation"
+                    component={EmployeeNavigation}
+                  /> */}
                   <Stack.Screen name="HRNavigation" component={HRNavigation} />
+                  {/* ============================================= Ending ============================================= */}
                 </Stack.Navigator>
               </SafeAreaView>
             </SafeAreaProvider>
@@ -84,16 +104,3 @@ export default function App() {
     // //</UserProvider>
   );
 }
-
-// const RoleBasedNavigator = () => {
-//   const { isAuth, user } = useContext(UserContext);
-//   const isHR = user?.role === "Admin"; // "Admin" is HR per backend data
-
-//   if (!isAuth) {
-//     return <Login />;
-//   } else if (isHR) {
-//     return <HRNavigation />;
-//   } else {
-//     return <EmployeeNavigation />;
-//   }
-// };

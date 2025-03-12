@@ -1,29 +1,30 @@
-import { StyleSheet } from 'react-native'
-import React from 'react'
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import Services from '../../screens/Services';
-import SabbaticalRequest from '../../screens/SabbaticalRequest';
-import ComplaintRequest from '../../screens/ComplaintRequest';
+import { StyleSheet } from "react-native";
+import React from "react";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import Services from "../../screens/Employee/Services";
+import SabbaticalRequest from "../../screens/Employee/SabbaticalRequest";
+import ComplaintRequest from "../../screens/Employee/ComplaintRequest";
 
 const Stack = createNativeStackNavigator();
-
+// SabbaticalRequest;
+// ComplaintRequest;
 const ServicesNavigation = () => {
   return (
     <Stack.Navigator
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#001D3D',
+          backgroundColor: "#001D3D",
         },
-        headerTintColor: '#FFF',
+        headerTintColor: "#FFF",
         headerTitleStyle: {
-          fontWeight: 'bold',
+          fontWeight: "bold",
         },
       }}
     >
       <Stack.Screen
         name="Services"
         component={Services}
-        options={{ 
+        options={{
           headerShown: false,
         }}
       />
@@ -44,9 +45,9 @@ const ServicesNavigation = () => {
         }}
       />
     </Stack.Navigator>
-  )
-}
+  );
+};
 
-export default ServicesNavigation
+export default ServicesNavigation;
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({});
