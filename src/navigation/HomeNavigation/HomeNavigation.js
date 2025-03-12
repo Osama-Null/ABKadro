@@ -5,6 +5,7 @@ import HomeEmp from "../../screens/HomeEmp";
 import Home from "../../screens/Home";
 import RequestDetails from "../../screens/RequestDetails";
 import ProfileInfo from "../../screens/ProfileInfo";
+import FileViewer from "../../screens/FileViewer";
 
 const Stack = createNativeStackNavigator();
 const HomeNavigation = () => {
@@ -25,6 +26,11 @@ const HomeNavigation = () => {
         name="ProfileInfo"
         component={ProfileInfo}
         headerBackButtonMenuEnabled="false"
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="FileViewer"
+        component={FileViewer}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
