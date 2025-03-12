@@ -1,16 +1,16 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation } from "@react-navigation/native";
 
 const Services = () => {
   const navigation = useNavigation();
 
   const handleSabbaticalRequest = () => {
-    navigation.navigate('SabbaticalRequest');
+    navigation.navigate("SabbaticalRequest");
   };
 
   const handleComplaintRequest = () => {
-    navigation.navigate('ComplaintRequest');
+    navigation.navigate("ComplaintRequest");
   };
 
   return (
@@ -20,14 +20,14 @@ const Services = () => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.requestButton}
           onPress={handleSabbaticalRequest}
         >
           <Text style={styles.buttonText}>Sabbatical Request</Text>
         </TouchableOpacity>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={styles.requestButton}
           onPress={handleComplaintRequest}
         >
@@ -56,20 +56,20 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     gap: 20,
     paddingHorizontal: 16,
   },
   requestButton: {
-    backgroundColor: '#FFC300',
+    backgroundColor: "#FFC300",
     paddingVertical: 15,
     paddingHorizontal: 20,
     borderRadius: 10,
-    width: '80%',
-    alignItems: 'center',
+    width: "80%",
+    alignItems: "center",
     elevation: 3,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -78,8 +78,8 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
   },
   buttonText: {
-    color: '#000',
+    color: "#000",
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
   },
 });

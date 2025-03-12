@@ -36,6 +36,7 @@ const Login = () => {
           borderBottomRightRadius: 60,
           overflow: "hidden",
           justifyContent: "center",
+          
         }}
       >
         <BlurView intensity={60} style={styles.blurContainer}>
@@ -187,6 +188,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#001D3D",
+    
   },
   background: {
     position: "absolute",
