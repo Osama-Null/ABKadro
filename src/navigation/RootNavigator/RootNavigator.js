@@ -24,8 +24,8 @@ const RootNavigator = () => {
         />
       )} */}
       {/* ============================================= Starting ============================================= */}
-      {/* <Stack.Screen name="EmployeeNavigation" component={EmployeeNavigation} /> */}
-      <Stack.Screen name="HRNavigation" component={HRNavigation} />
+      <Stack.Screen name="EmployeeNavigation" component={EmployeeNavigation} />
+      {/* <Stack.Screen name="HRNavigation" component={HRNavigation} /> */}
     </Stack.Navigator>
   );
 };

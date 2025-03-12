@@ -34,31 +34,31 @@ const HRRequestDetails = ({ route }) => {
     navigation.goBack();
   };
 
-  return (
-    // <View style={styles.container}>
-    //   <View
-    //     style={{
-    //       flex: 1,
-    //       backgroundColor: "red",
-    //       width: "100%",
-    //     }}
-    //   >
-    //     <Image
-    //       source={{ uri: Employees[0].empImage }}
-    //       style={{ width: "100%", height: "100%", resizeMode: "cover" }}
-    //     />
-    //   </View>
-    //   <View
-    //     style={{
-    //       flex: 2,
-    //       backgroundColor: "blue",
-    //       width: "100%",
-    //     }}
-    //   >
-    //     <Text>hi</Text>
-    //   </View>
-    // </View>
+  // <View style={styles.container}>
+  //   <View
+  //     style={{
+  //       flex: 1,
+  //       backgroundColor: "red",
+  //       width: "100%",
+  //     }}
+  //   >
+  //     <Image
+  //       source={{ uri: Employees[0].empImage }}
+  //       style={{ width: "100%", height: "100%", resizeMode: "cover" }}
+  //     />
+  //   </View>
+  //   <View
+  //     style={{
+  //       flex: 2,
+  //       backgroundColor: "blue",
+  //       width: "100%",
+  //     }}
+  //   >
+  //     <Text>hi</Text>
+  //   </View>
+  // </View>
 
+  return (
     <View style={styles.container}>
       <TouchableOpacity
         style={{
