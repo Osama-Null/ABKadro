@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import employees from "../data/employees";
+import employees from "../../data/employees";
 
-const RequestDetails = ({ route }) => {
+const EmployeeRequestDetails = ({ route }) => {
   const {
     title,
     type,
@@ -81,29 +81,23 @@ const RequestDetails = ({ route }) => {
           <Text style={styles.date}>{formattedDate}</Text>
         </View>
         <TouchableOpacity
-            style={{
-              backgroundColor: "yellow",
-              borderRadius: 100,
-              overflow: "hidden",
-              width: 50,
-              height: 50,
-            }}
-            onPress={() => navigation.navigate('ProfileInfo', {
-              empId: Employees[0].empId,
-              name: Employees[0].empName,
-              image: Employees[0].empImage,
-              department: Employees[0].empDepartment,
-              email: Employees[0].empEmail,
-              phone: Employees[0].empPhone,
-              position: Employees[0].empPosition,
-            })}
-          >
-            <Image
-              source={{ uri: Employees[0].empImage }}
-              width={50}
-              height={50}
-            />
-          </TouchableOpacity>
+          style={{
+            backgroundColor: "yellow",
+            borderRadius: 100,
+            overflow: "hidden",
+            width: 50,
+            height: 50,
+          }}
+          onPress={() =>
+            navigation.navigate("ProfileInfo", { employee: Employees[0] })
+          }
+        >
+          <Image
+            source={{ uri: Employees[0].empImage }}
+            width={50}
+            height={50}
+          />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.infoRow}>
@@ -162,4 +156,4 @@ const styles = StyleSheet.create({
   buttonContainer: { marginTop: 20, alignSelf: "center" },
 });
 
-export default RequestDetails;
+export default EmployeeRequestDetails;

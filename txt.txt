@@ -17,17 +17,31 @@ C:.
     ├───navigation
     │   ├───AuthNavigation
     │   │   └───AuthNavigation.js
-    │   ├───HomeNavigation
-    │   │   └───HomeNavigation.js
-    │   ├───MainNavigation
-    │   │   └───MainNavigation.js
-    │   └───SplashNavigation
-    │       └───SplashNavigation.js
+    │   ├───RootNavigation
+    │   │   └───RootNavigation.js
+    │   ├───HR
+    │   │   ├───Nav
+    │   │   │   ├───HRHomeNavigation.js
+    │   │   │   └───HRReqHistoryNavigation.js
+    │   │   └───HRNavigation.js // Same as MainNavigation but for HR
+    │   ├───Employee
+    │   │   ├───Nav
+    │   │   │   ├───EmployeeHomeNavigation.js
+    │   │   │   └───EmployeeReqHistoryNavigation.js
+    │   │   └───EmployeeNavigation.js  // Same as MainNavigation but for Employee
+    │   └───Shared
+    │       ├───FaqNavigation.js
+    │       └───ServicesNavigation.js
     └───screens
-        ├───Home.js
-        ├───Login.js
-        ├───Register.js
-        └───Splash.js
+        ├───HR
+        │   ├───HRHome.js
+        │   └─── //Other screens for HR
+        ├───Employee
+        │   ├───EmployeeHome.js
+        │   └─── //Other screens for Employee
+        └───Shared
+            ├───Login.js
+            └─── //Other shared screen
 
 
 
