@@ -8,12 +8,13 @@ import HRNavigation from "../HR/HRNavigation";
 const Stack = createStackNavigator();
 
 const RootNavigator = () => {
-  // const { isAuth, user } = useContext(UserContext);
-  // const isHR = user?.department === "Human Resources";
+  const { isAuth, user } = useContext(UserContext);
+  const isHR = user?.department === "Human Resources";
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {/* {!isAuth ? (
+      {/* ============================================= Starting ============================================= */}
+      {!isAuth ? (
         <Stack.Screen name="Login" component={Login} />
       ) : isHR ? (
         <Stack.Screen name="HRNavigation" component={HRNavigation} />
@@ -22,10 +23,7 @@ const RootNavigator = () => {
           name="EmployeeNavigation"
           component={EmployeeNavigation}
         />
-      )} */}
-      {/* ============================================= Starting ============================================= */}
-      <Stack.Screen name="EmployeeNavigation" component={EmployeeNavigation} />
-      {/* <Stack.Screen name="HRNavigation" component={HRNavigation} /> */}
+      )}
     </Stack.Navigator>
   );
 };
