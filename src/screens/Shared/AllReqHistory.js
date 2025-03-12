@@ -8,14 +8,24 @@ import {
 } from "react-native";
 import { RequestsContext } from "../../context/RequestsContext";
 import AllReqHistoryList from "../../components/Shared/AllReqHistoryList";
+import employees from "../../data/employees"; // Import employees data
 
 const AllReqHistory = () => {
   const { requests } = useContext(RequestsContext); // Access shared requests state
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("All"); // "All", "Approved", "Rejected"
 
+  // Map requests to include employeeName
+  const requestsWithEmployeeName = requests.map((req) => {
+    const employee = employees.find((emp) => emp.id === req.employeeId);
+    return {
+      ...req,
+      employeeName: employee ? employee.name : "Unknown",
+    };
+  });
+
   // Filter requests to show only "Approved" or "Rejected"
-  const filteredRequests = requests
+  const filteredRequests = requestsWithEmployeeName
     .filter((req) => req.status === "Approved" || req.status === "Rejected")
     .filter(
       (req) =>
