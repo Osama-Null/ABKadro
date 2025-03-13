@@ -1,5 +1,5 @@
 import React from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
+import { View, ScrollView, StyleSheet, Text } from "react-native";
 import employees from "../../data/employees";
 import HREmployeeItem from "./HREmployeeItem";
 
@@ -16,6 +16,7 @@ const HREmployeeList = ({ search }) => {
 
   return (
     <View style={styles.container}>
+      <Text style={{color: "white"}}>{Employees[0].name}</Text>
       <ScrollView>{Employees}</ScrollView>
     </View>
   );

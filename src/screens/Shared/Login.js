@@ -1,5 +1,5 @@
 // src/screens/Login.js
-import React from "react";
+import React, { useState, useContext } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,22 +11,33 @@ import {
 } from "react-native";
 import { BlurView } from "expo-blur";
 import Checkbox from "expo-checkbox";
-import { useState } from "react";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
+import { AuthContext } from "../../context/AuthContext";
+import { useNavigation } from "@react-navigation/native";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isChecked, setChecked] = useState(false);
+  const [error, setError] = useState("");
+  const { login } = useContext(AuthContext);
+  const navigation = useNavigation();
+
+  const handleLogin = () => {
+    const role = login(email, password);
+    if (role) {
+      // Navigation happens automatically via RoleBasedNavigator
+      setError(""); // Clear any previous error
+    } else {
+      setError("Invalid email or password");
+    }
+  };
+
   return (
     <View style={styles.container}>
-      {/* <LinearGradient
-        // Background Linear Gradient
-        colors={["rgba(121, 95, 252, 0.8)", "transparent"]}
-        style={styles.background}
-      /> */}
-
       <View
         style={{
           flex: 1,
@@ -36,7 +47,6 @@ const Login = () => {
           borderBottomRightRadius: 60,
           overflow: "hidden",
           justifyContent: "center",
-          
         }}
       >
         <BlurView intensity={60} style={styles.blurContainer}>
@@ -54,12 +64,14 @@ const Login = () => {
         <View style={{ gap: 30, marginTop: 50 }}>
           <View style={{ gap: 20 }}>
             <TextInput
-              placeholder="Username"
+              placeholder="Email"
               placeholderTextColor={"grey"}
               style={{
                 borderBottomWidth: 1,
                 borderBottomColor: "grey",
               }}
+              value={email}
+              onChangeText={setEmail}
             />
             <TextInput
               placeholder="Password"
@@ -68,7 +80,11 @@ const Login = () => {
                 borderBottomWidth: 1,
                 borderBottomColor: "grey",
               }}
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
             />
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
           </View>
           <View
             style={{
@@ -111,19 +127,11 @@ const Login = () => {
               width: "100%",
               height: "15%",
             }}
+            onPress={handleLogin}
           >
             <Text style={{ color: "white", fontWeight: "bold" }}>Login</Text>
           </TouchableOpacity>
-          <View
-            style={{ flexDirection: "row", gap: 5, justifyContent: "center" }}
-          >
-            <Text style={{ color: "white" }}>Don't have an account? </Text>
-            <TouchableOpacity>
-              <Text style={{ color: "gold", fontWeight: "bold" }}>
-                Register
-              </Text>
-            </TouchableOpacity>
-          </View>
+
           <View
             style={{
               flexDirection: "row",
@@ -188,7 +196,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#001D3D",
-    
   },
   background: {
     position: "absolute",

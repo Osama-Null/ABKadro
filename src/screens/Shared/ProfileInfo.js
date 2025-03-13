@@ -5,8 +5,10 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { AuthContext } from "../../context/AuthContext";
 
 const ProfileInfo = ({ route }) => {
+  const { logout } = useContext(AuthContext);
   const navigation = useNavigation();
   const { employee } = route.params;
 
@@ -32,7 +34,7 @@ const ProfileInfo = ({ route }) => {
             bottom: 0,
             right: 20,
           }}
-          onPress={() => navigation.navigate("Login")}
+          onPress={logout}
         >
           <MaterialIcons name="logout" size={30} color="red" />
         </TouchableOpacity>

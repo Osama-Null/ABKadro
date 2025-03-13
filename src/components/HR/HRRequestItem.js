@@ -93,7 +93,7 @@ const HRRequestItem = ({
             <Text
               style={{
                 color: "white",
-                fontSize: 14,
+                fontSize: 17,
                 fontWeight: "bold",
                 fontFamily: "Roboto",
               }}
@@ -103,7 +103,7 @@ const HRRequestItem = ({
             <Text
               style={{
                 color: "white",
-                fontSize: 11,
+                fontSize: 14,
                 fontWeight: "normal",
                 fontFamily: "Roboto",
               }}
@@ -115,7 +115,7 @@ const HRRequestItem = ({
           <Text
             style={{
               color: "white",
-              fontSize: 11,
+              fontSize: 14,
               fontWeight: "500",
               fontFamily: "Roboto",
             }}
@@ -125,7 +125,7 @@ const HRRequestItem = ({
           <Text
             style={{
               color: "orange",
-              fontSize: 13,
+              fontSize: 16,
               fontWeight: "bold",
             }}
           >

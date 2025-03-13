@@ -7,7 +7,7 @@ const employees = [
     department: "Engineering",
     hireDate: "2022-03-15",
     contactInfo: {
-      email: "john.russo@company.com",
+      email: "john.russo@abk-people.com",
       phone: "+1-555-0123",
     },
     password: "JohnEng2022!",
@@ -33,8 +33,9 @@ const employees = [
     ],
     position: "Senior Developer",
     description: "Mobile app development specialist",
-    status: "Active",
+    status: "Inactive",
     hrSpecific: null,
+    role: "user" // Added role
   },
   {
     id: 2,
@@ -44,7 +45,7 @@ const employees = [
     department: "Marketing",
     hireDate: "2021-08-22",
     contactInfo: {
-      email: "limei.chen@company.com",
+      email: "limei.chen@abk-people.com",
       phone: "+1-555-0124",
     },
     password: "LiMeiMkt2021!",
@@ -72,6 +73,7 @@ const employees = [
     description: "Digital campaign strategist",
     status: "Active",
     hrSpecific: null,
+    role: "user" // Added role
   },
   {
     id: 3,
@@ -81,7 +83,7 @@ const employees = [
     department: "Sales",
     hireDate: "2020-11-10",
     contactInfo: {
-      email: "carlos.martinez@company.com",
+      email: "carlos.martinez@abk-people.com",
       phone: "+1-555-0125",
     },
     password: "CarlosSales2020!",
@@ -109,6 +111,7 @@ const employees = [
     description: "Top-performing sales professional",
     status: "Active",
     hrSpecific: null,
+    role: "user" // Added role
   },
   {
     id: 4,
@@ -118,7 +121,7 @@ const employees = [
     department: "Finance",
     hireDate: "2019-06-18",
     contactInfo: {
-      email: "ahmad.alkhalid@company.com",
+      email: "ahmad.alkhalid@abk-people.com",
       phone: "+1-555-0127",
     },
     password: "AhmadFin2019!",
@@ -146,6 +149,7 @@ const employees = [
     description: "Strategic financial planner",
     status: "Active",
     hrSpecific: null,
+    role: "user" // Added role
   },
   // HR Employees
   {
@@ -156,7 +160,7 @@ const employees = [
     department: "Human Resources",
     hireDate: "2023-01-05",
     contactInfo: {
-      email: "priya.sharma@company.com",
+      email: "priya.sharma@abk-people.com",
       phone: "+1-555-0126",
     },
     password: "PriyaHR2023!",
@@ -188,6 +192,7 @@ const employees = [
       yearsInHR: 6,
       specialties: ["Talent Acquisition", "Employee Engagement"],
     },
+    role: "user" // Added role
   },
   {
     id: 6,
@@ -197,7 +202,7 @@ const employees = [
     department: "Human Resources",
     hireDate: "2020-09-12",
     contactInfo: {
-      email: "david.kim@company.com",
+      email: "david.kim@abk-people.com",
       phone: "+1-555-0128",
     },
     password: "David2020#HR",
@@ -229,6 +234,7 @@ const employees = [
       yearsInHR: 8,
       specialties: ["Compensation", "Regulatory Compliance"],
     },
+    role: "user" // Added role
   },
   {
     id: 7,
@@ -238,7 +244,7 @@ const employees = [
     department: "Human Resources",
     hireDate: "2022-06-20",
     contactInfo: {
-      email: "sofia.alvarez@company.com",
+      email: "sofia.alvarez@abk-people.com",
       phone: "+1-555-0129",
     },
     password: "SofiaHR22$",
@@ -270,6 +276,7 @@ const employees = [
       yearsInHR: 4,
       specialties: ["Onboarding", "Diversity & Inclusion"],
     },
+    role: "user" // Added role
   },
   {
     id: 8,
@@ -279,10 +286,10 @@ const employees = [
     department: "Human Resources",
     hireDate: "2018-04-01",
     contactInfo: {
-      email: "marcus.johnson@company.com",
+      email: "marcus.johnson@abk-people.com",
       phone: "+1-555-0130",
     },
-    password: "MarcusHR2  018*",
+    password: "MarcusHR2018*",
     skills: [
       {
         id: 20,
@@ -311,6 +318,7 @@ const employees = [
       yearsInHR: 12,
       specialties: ["Strategic HR", "Labor Law"],
     },
+    role: "user"
   },
   {
     id: 9,
@@ -320,7 +328,7 @@ const employees = [
     department: "Human Resources",
     hireDate: "2021-11-15",
     contactInfo: {
-      email: "aisha.patel@company.com",
+      email: "aisha.patel@abk-people.com",
       phone: "+1-555-0131",
     },
     password: "Aisha21@HR",
@@ -352,6 +360,91 @@ const employees = [
       yearsInHR: 6,
       specialties: ["Wellness Programs", "HR Technology"],
     },
+    role: "user"
+  },
+  {
+    id: 10,
+    name: "Abdulaziz AlMarifi",
+    image: "https://png.pngtree.com/png-vector/20191125/ourmid/pngtree-beautiful-admin-roles-line-vector-icon-png-image_2035379.jpg",
+    rating: 4.7,
+    department: "Human Resources",
+    hireDate: "2021-11-15",
+    contactInfo: {
+      email: "Abdulaziz-AlMarifi@abk-people.com",
+      phone: "+1-555-0131",
+    },
+    password: "Abdulaziz@Admin",
+    skills: [
+      {
+        id: 23,
+        name: "Employee Wellness",
+        proficiency: "Advanced",
+        yearsExperience: 4,
+      },
+      {
+        id: 24,
+        name: "HRIS Systems",
+        proficiency: "Expert",
+        yearsExperience: 5,
+      },
+      {
+        id: 25,
+        name: "Change Management",
+        proficiency: "Intermediate",
+        yearsExperience: 2,
+      },
+    ],
+    position: "HR Business Partner",
+    description: "Focuses on employee wellness and HR technology",
+    status: "Active",
+    hrSpecific: {
+      certifications: ["SHRM-SCP"],
+      yearsInHR: 6,
+      specialties: ["Wellness Programs", "HR Technology"],
+    },
+    role: "admin"
+  },
+  {
+    id: 11,
+    name: "Abdullah AlHirz",
+    image: "https://png.pngtree.com/png-vector/20191125/ourmid/pngtree-beautiful-admin-roles-line-vector-icon-png-image_2035379.jpg",
+    rating: 4.7,
+    department: "Human Resources",
+    hireDate: "2021-11-15",
+    contactInfo: {
+      email: "Abdullah-AlHirz@abk-people.com",
+      phone: "+1-555-0131",
+    },
+    password: "Abdullah@Admin",
+    skills: [
+      {
+        id: 23,
+        name: "Employee Wellness",
+        proficiency: "Advanced",
+        yearsExperience: 4,
+      },
+      {
+        id: 24,
+        name: "HRIS Systems",
+        proficiency: "Expert",
+        yearsExperience: 5,
+      },
+      {
+        id: 25,
+        name: "Change Management",
+        proficiency: "Intermediate",
+        yearsExperience: 2,
+      },
+    ],
+    position: "HR Business Partner",
+    description: "Focuses on employee wellness and HR technology",
+    status: "Active",
+    hrSpecific: {
+      certifications: ["SHRM-SCP"],
+      yearsInHR: 6,
+      specialties: ["Wellness Programs", "HR Technology"],
+    },
+    role: "admin"
   },
 ];
 

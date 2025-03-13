@@ -24,7 +24,7 @@ const Services = () => {
           style={styles.requestButton}
           onPress={handleSabbaticalRequest}
         >
-          <Text style={styles.buttonText}>Sabbatical Request</Text>
+          <Text style={styles.buttonText}>Absence Request</Text>
         </TouchableOpacity>
 
         <TouchableOpacity

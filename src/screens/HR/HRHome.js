@@ -6,7 +6,7 @@ import {
   View,
   Image,
 } from "react-native";
-import React from "react";
+import React, { useContext } from "react";
 import employees from "../../data/employees";
 import requests from "../../data/requests";
 import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
@@ -18,11 +18,11 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Octicons from "@expo/vector-icons/Octicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
-
-
+import { RequestsContext } from "../../context/RequestsContext";
 
 const HRHome = () => {
   const navigation = useNavigation();
+  const { requests } = useContext(RequestsContext);
   // Mapping
   const Employees = employees.map((employee) => ({
     empId: employee.id,
@@ -75,29 +75,17 @@ const HRHome = () => {
     (req) => req.reqType === "Complaint"
   ).length;
 
-  const totalRequests = Requests.length;
-
   const totalRejected = Requests.filter(
     (req) => req.reqStatus === "Rejected"
   ).length;
 
   const totalAccepted = Requests.filter(
-    (req) => req.reqStatus === "Accepted"
+    (req) => req.reqStatus === "Approved"
   ).length;
 
-  const percentageAccepted =
-    totalRequests > 0 ? (totalAccepted / totalRequests) * 100 : 0;
-
-  const percentageRejected =
-    totalRequests > 0 ? (totalRejected / totalRequests) * 100 : 0;
-
-  // Calculate percentages as strings for display
-  const percentageAcceptedDisplay = percentageAccepted.toFixed(0);
-  const percentageRejectedDisplay = percentageRejected.toFixed(0);
-
   const data = [
-    { value: percentageAccepted, text: "Approved", color: "#03fcc6" }, // Blue
-    { value: percentageRejected, text: "Rejected", color: "#FC036F" }, // Red
+    { value: totalAccepted, text: "Approved", color: "#03fcc6" }, // Blue
+    { value: totalRejected, text: "Rejected", color: "#FC036F" }, // Red
   ];
 
   return (
@@ -136,7 +124,9 @@ const HRHome = () => {
               width: 50,
               height: 50,
             }}
-            onPress={() => navigation.navigate("HRProfileInfo", { employee: Employees[0] })}
+            onPress={() =>
+              navigation.navigate("HRProfileInfo", { employee: Employees[0] })
+            }
           >
             <Image
               source={{ uri: Employees[0].empImage }}
@@ -175,8 +165,9 @@ const HRHome = () => {
                   <Text
                     style={{
                       color: "white",
-                      fontSize: 15,
+                      fontSize: 20,
                       alignSelf: "center",
+                      fontWeight: "bold",
                     }}
                   >
                     Total Requests: {totalPending}
@@ -200,12 +191,12 @@ const HRHome = () => {
                   <Text
                     style={{
                       color: "white",
-                      fontSize: 15,
+                      fontSize: 20,
                     }}
                   >
                     <FontAwesome5
                       name="umbrella-beach"
-                      size={15}
+                      size={20}
                       color="orange"
                     />{" "}
                     {totalLeave}
@@ -213,10 +204,10 @@ const HRHome = () => {
                   <Text
                     style={{
                       color: "white",
-                      fontSize: 15,
+                      fontSize: 20,
                     }}
                   >
-                    <Octicons name="report" size={15} color="orange" />{" "}
+                    <Octicons name="report" size={20} color="orange" />{" "}
                     {totalComplaints}
                   </Text>
                 </View>
@@ -231,10 +222,10 @@ const HRHome = () => {
               >
                 <PieChart
                   data={data}
-                  radius={50} // Outer radius of the donut
+                  radius={60} // Outer radius of the donut
                   donut={true} // Enables the donut chart
                   innerCircleColor="#384E67"
-                  innerRadius={40}
+                  innerRadius={45}
                   centerLabelComponent={() => (
                     <View
                       style={{
@@ -265,10 +256,22 @@ const HRHome = () => {
                           marginRight: 2,
                         }}
                       >
-                        <Text style={{ color: "white", fontSize: 9 }}>
+                        <Text
+                          style={{
+                            color: "white",
+                            fontSize: 11,
+                            fontWeight: "bold",
+                          }}
+                        >
                           Accepted:
                         </Text>
-                        <Text style={{ color: "white", fontSize: 9 }}>
+                        <Text
+                          style={{
+                            color: "white",
+                            fontSize: 11,
+                            fontWeight: "bold",
+                          }}
+                        >
                           Rejected:
                         </Text>
                       </View>
@@ -280,11 +283,23 @@ const HRHome = () => {
                           marginRight: 2,
                         }}
                       >
-                        <Text style={{ color: "white", fontSize: 9 }}>
-                          {percentageAcceptedDisplay}
+                        <Text
+                          style={{
+                            color: "white",
+                            fontSize: 11,
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {totalAccepted}
                         </Text>
-                        <Text style={{ color: "white", fontSize: 9 }}>
-                          {percentageRejectedDisplay}
+                        <Text
+                          style={{
+                            color: "white",
+                            fontSize: 11,
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {totalRejected}
                         </Text>
                       </View>
                     </View>

@@ -156,18 +156,18 @@ const SabbaticalRequest = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerText}>Sabbatical Request</Text>
+        <Text style={styles.headerText}>Absence Request</Text>
       </View>
 
       <ScrollView style={styles.formContainer}>
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Type of Sabbatical</Text>
+          <Text style={styles.label}>Type of Absence</Text>
           <TouchableOpacity
             style={styles.dropdownButton}
             onPress={() => setShowTypeDropdown(true)}
           >
             <Text style={styles.dropdownButtonText}>
-              {formData.type || "Select Sabbatical Type"}
+              {formData.type || "Select Absence Type"}
             </Text>
             <MaterialCommunityIcons
               name="chevron-down"
@@ -225,7 +225,7 @@ const SabbaticalRequest = () => {
         {error && <Text style={styles.errorText}>{error}</Text>}
 
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitButtonText}>Submit Request</Text>
+          <Text style={styles.submitButtonText}>Submit</Text>
         </TouchableOpacity>
       </ScrollView>
 
