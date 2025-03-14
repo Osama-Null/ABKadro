@@ -51,6 +51,7 @@ const Login = () => {
       >
         <BlurView intensity={60} style={styles.blurContainer}>
           <FontAwesome5 name="user-alt" size={80} color="gold" />
+          <Image />
         </BlurView>
       </View>
 
@@ -69,6 +70,7 @@ const Login = () => {
               style={{
                 borderBottomWidth: 1,
                 borderBottomColor: "grey",
+                color: "white",
               }}
               value={email}
               onChangeText={setEmail}
@@ -79,12 +81,13 @@ const Login = () => {
               style={{
                 borderBottomWidth: 1,
                 borderBottomColor: "grey",
+                color: "white",
               }}
               value={password}
               onChangeText={setPassword}
               secureTextEntry
             />
-            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+            {error ? <Text style={styles.errorText} color={"white"}>{error}</Text> : null}
           </View>
           <View
             style={{

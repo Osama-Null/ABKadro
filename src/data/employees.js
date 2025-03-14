@@ -35,7 +35,7 @@ const employees = [
     description: "Mobile app development specialist",
     status: "Inactive",
     hrSpecific: null,
-    role: "user" // Added role
+    role: "user", // Added role
   },
   {
     id: 2,
@@ -73,7 +73,7 @@ const employees = [
     description: "Digital campaign strategist",
     status: "Active",
     hrSpecific: null,
-    role: "user" // Added role
+    role: "user", // Added role
   },
   {
     id: 3,
@@ -111,7 +111,7 @@ const employees = [
     description: "Top-performing sales professional",
     status: "Active",
     hrSpecific: null,
-    role: "user" // Added role
+    role: "user", // Added role
   },
   {
     id: 4,
@@ -149,7 +149,7 @@ const employees = [
     description: "Strategic financial planner",
     status: "Active",
     hrSpecific: null,
-    role: "user" // Added role
+    role: "user", // Added role
   },
   // HR Employees
   {
@@ -192,7 +192,7 @@ const employees = [
       yearsInHR: 6,
       specialties: ["Talent Acquisition", "Employee Engagement"],
     },
-    role: "user" // Added role
+    role: "user", // Added role
   },
   {
     id: 6,
@@ -234,7 +234,7 @@ const employees = [
       yearsInHR: 8,
       specialties: ["Compensation", "Regulatory Compliance"],
     },
-    role: "user" // Added role
+    role: "user", // Added role
   },
   {
     id: 7,
@@ -276,7 +276,7 @@ const employees = [
       yearsInHR: 4,
       specialties: ["Onboarding", "Diversity & Inclusion"],
     },
-    role: "user" // Added role
+    role: "user", // Added role
   },
   {
     id: 8,
@@ -318,7 +318,7 @@ const employees = [
       yearsInHR: 12,
       specialties: ["Strategic HR", "Labor Law"],
     },
-    role: "user"
+    role: "user",
   },
   {
     id: 9,
@@ -360,12 +360,13 @@ const employees = [
       yearsInHR: 6,
       specialties: ["Wellness Programs", "HR Technology"],
     },
-    role: "user"
+    role: "user",
   },
   {
     id: 10,
     name: "Abdulaziz AlMarifi",
-    image: "https://png.pngtree.com/png-vector/20191125/ourmid/pngtree-beautiful-admin-roles-line-vector-icon-png-image_2035379.jpg",
+    image:
+      "https://png.pngtree.com/png-vector/20191125/ourmid/pngtree-beautiful-admin-roles-line-vector-icon-png-image_2035379.jpg",
     rating: 4.7,
     department: "Human Resources",
     hireDate: "2021-11-15",
@@ -402,12 +403,13 @@ const employees = [
       yearsInHR: 6,
       specialties: ["Wellness Programs", "HR Technology"],
     },
-    role: "admin"
+    role: "admin",
   },
   {
     id: 11,
     name: "Abdullah AlHirz",
-    image: "https://png.pngtree.com/png-vector/20191125/ourmid/pngtree-beautiful-admin-roles-line-vector-icon-png-image_2035379.jpg",
+    image:
+      "https://png.pngtree.com/png-vector/20191125/ourmid/pngtree-beautiful-admin-roles-line-vector-icon-png-image_2035379.jpg",
     rating: 4.7,
     department: "Human Resources",
     hireDate: "2021-11-15",
@@ -444,7 +446,50 @@ const employees = [
       yearsInHR: 6,
       specialties: ["Wellness Programs", "HR Technology"],
     },
-    role: "admin"
+    role: "admin",
+  },
+  {
+    id: 12,
+    name: "Admin",
+    image:
+      "https://png.pngtree.com/png-vector/20191125/ourmid/pngtree-beautiful-admin-roles-line-vector-icon-png-image_2035379.jpg",
+    rating: 4.7,
+    department: "Human Resources",
+    hireDate: "2021-11-15",
+    contactInfo: {
+      email: "Admin",
+      phone: "+1-555-0131",
+    },
+    password: "Admin",
+    skills: [
+      {
+        id: 23,
+        name: "Employee Wellness",
+        proficiency: "Advanced",
+        yearsExperience: 4,
+      },
+      {
+        id: 24,
+        name: "HRIS Systems",
+        proficiency: "Expert",
+        yearsExperience: 5,
+      },
+      {
+        id: 25,
+        name: "Change Management",
+        proficiency: "Intermediate",
+        yearsExperience: 2,
+      },
+    ],
+    position: "HR Business Partner",
+    description: "Focuses on employee wellness and HR technology",
+    status: "Active",
+    hrSpecific: {
+      certifications: ["SHRM-SCP"],
+      yearsInHR: 6,
+      specialties: ["Wellness Programs", "HR Technology"],
+    },
+    role: "admin",
   },
 ];
 

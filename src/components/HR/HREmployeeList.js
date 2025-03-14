@@ -8,7 +8,7 @@ const HREmployeeList = ({ search }) => {
   const filteredEmployees = employees.filter((emp) =>
     emp.name.toLowerCase().includes(search.toLowerCase())
   );
-
+//==========================================================
   // Map filtered employees to HREmployeeItem components
   const Employees = filteredEmployees.map((employee) => (
     <HREmployeeItem key={employee.id} employee={employee} />
