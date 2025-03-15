@@ -29,8 +29,9 @@ const Login = ({ setIsAuth, setRole }) => {
       setRole(data.role);
       alert("Welcome");
     },
-    onError: () => {
-      setError("Something went wrong");
+    onError: (error) => {
+      //setError("Something went wrong");
+      console.log(error);
     },
   });
 

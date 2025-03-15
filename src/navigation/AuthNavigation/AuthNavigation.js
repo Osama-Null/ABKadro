@@ -1,8 +1,9 @@
 import { StyleSheet } from "react-native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
-import Login from "../../screens/Login";
+
 import Register from "../../screens/Register";
+import Login from "../../screens/Shared/Login";
 
 const Stack = createNativeStackNavigator();
 const AuthNavigation = ({ setIsAuth, setRole }) => {
@@ -10,7 +11,6 @@ const AuthNavigation = ({ setIsAuth, setRole }) => {
     <Stack.Navigator>
       <Stack.Screen
         name="Login"
-        component={Login}
         headerBackButtonMenuEnabled="false"
         options={{ headerShown: false }}
       >

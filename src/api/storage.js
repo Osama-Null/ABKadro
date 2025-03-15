@@ -1,4 +1,4 @@
-import { setItemAsync } from "expo-secure-store";
+import { setItemAsync, getItemAsync, deleteItemAsync } from "expo-secure-store";
 
 setItemAsync;
 
@@ -16,4 +16,3 @@ const deleteToken = async () => {
 };
 
 export { setToken, getToken, deleteToken };
- 
