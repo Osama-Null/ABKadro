@@ -5,7 +5,7 @@ import Login from "../../screens/Login";
 import Register from "../../screens/Register";
 
 const Stack = createNativeStackNavigator();
-const AuthNavigation = () => {
+const AuthNavigation = ({ setIsAuth, setRole }) => {
   return (
     <Stack.Navigator>
       <Stack.Screen
@@ -13,7 +13,11 @@ const AuthNavigation = () => {
         component={Login}
         headerBackButtonMenuEnabled="false"
         options={{ headerShown: false }}
-      />
+      >
+        {(props) => (
+          <Login {...props} setIsAuth={setIsAuth} setRole={setRole} />
+        )}
+      </Stack.Screen>
       {/* <Stack.Screen
         name="Register"
         component={Register}

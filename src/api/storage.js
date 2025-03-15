@@ -16,10 +16,4 @@ const deleteToken = async () => {
 };
 
 export { setToken, getToken, deleteToken };
-
-// auth.js;
-const login = async (userInfo) => {
-  const ews = await instance.post("/login", userInfo);
-  setToken(res.data.token);
-  return res.data;
-};
+ 

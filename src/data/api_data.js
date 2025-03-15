@@ -9,6 +9,33 @@ const api_data = [
     },
     Endpoints: [
       {
+        Path: "/auth/login",
+        Method: "POST",
+        Description:
+          "Authenticate a user and return a JWT token, role, and user ID",
+        Request: {
+          ContentType: "application/json",
+          Body: {
+            email: "string",
+            password: "string",
+          },
+        },
+        Response: {
+          Status: 200,
+          Body: {
+            token: "string",
+            role: "string",
+            userId: "string",
+          },
+        },
+        Errors: [
+          {
+            Status: 400,
+            Description: "Invalid email or password",
+          },
+        ],
+      },
+      {
         Path: "/requests/vacation",
         Method: "POST",
         Description: "Create a vacation request (Employee only)",

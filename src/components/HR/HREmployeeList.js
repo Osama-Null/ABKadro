@@ -3,27 +3,29 @@ import { View, ScrollView, StyleSheet, Text } from "react-native";
 import employees from "../../data/employees";
 import HREmployeeItem from "./HREmployeeItem";
 import { getAllEmployees } from "../../api/admins";
+import { useQuery } from "@tanstack/react-query";
 
 const HREmployeeList = ({ search }) => {
   // API
-  const [employeesbe, setEmployeesBe] = useState([]);
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["fetchAllEmployees"],
+    queryFn: () => getAllEmployees(),
+  });
+  if (data == null) {
+    console.log("All Fetch 👇 ", data);
+  } else console.log("☹️☹️☹️☹️☹️☹️☹️ No Data ☹️☹️☹️☹️☹️☹️☹️", isError);
 
-  useEffect(() => {
-    const fetchEmployees = async () => {
-      const res = await getAllEmployees();
-      setEmployeesBe(res);
-      console.log("Employees: ", res);
-    };
-    fetchEmployees();
-  }, []);
+  const EmployeesAPI = data
+    ?.filter((employee) => {
+      return employee.name.toLowerCase().includes(search.toLowerCase());
+    })
+    .map((employee) => {
+      return <HREmployeeItem key={employee.id} employee={employee} />;
+    });
 
-  // const Employees = employeesbe
-  //   .filter((employee) => {
-  //     return employee.name.toLowerCase().includes(search.toLowerCase());
-  //   })
-  //   .map((employee) => {
-  //     return <HREmployeeItem key={employee.id} employee={employee} />;
-  //   });
+  if (EmployeesAPI == null) {
+    console.log("All Fetched Employees 👨‍💼", data);
+  } else console.log("❌☹️ No Employees ☹️❌\n", isError);
   //==========================================================
   // Filter employees based on search input
   const filteredEmployees = employees.filter((emp) =>

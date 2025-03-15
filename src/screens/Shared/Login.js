@@ -1,5 +1,5 @@
 // src/screens/Login.js
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -15,26 +15,35 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
-import { AuthContext } from "../../context/AuthContext";
-import { useNavigation } from "@react-navigation/native";
+import { useMutation } from "@tanstack/react-query";
+import { login } from "../../api/auth";
 
-const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isChecked, setChecked] = useState(false);
-  const [error, setError] = useState("");
-  const { login } = useContext(AuthContext);
-  const navigation = useNavigation();
+const Login = ({ setIsAuth, setRole }) => {
+  const [userInfo, setUserInfo] = useState({});
+  const [error, setError] = useState(null);
+  const { mutate } = useMutation({
+    mutationKey: ["login"],
+    mutationFn: () => login(userInfo),
+    onSuccess: (data) => {
+      setIsAuth(true);
+      setRole(data.role);
+      alert("Welcome");
+    },
+    onError: () => {
+      setError("Something went wrong");
+    },
+  });
 
   const handleLogin = () => {
-    const role = login(email, password);
-    if (role) {
-      // Navigation happens automatically via RoleBasedNavigator
-      setError(""); // Clear any previous error
-    } else {
-      setError("Invalid email or password");
+    if (!userInfo.email || !userInfo.password) {
+      alert("Please enter email and password");
+      return;
     }
+    setError(null);
+    mutate();
   };
+
+  // const [isChecked, setChecked] = useState(false);
 
   return (
     <View style={styles.container}>
@@ -72,8 +81,10 @@ const Login = () => {
                 borderBottomColor: "grey",
                 color: "white",
               }}
-              value={email}
-              onChangeText={setEmail}
+              onChangeText={(value) => {
+                setUserInfo({ ...userInfo, email: value });
+                setError(null);
+              }}
             />
             <TextInput
               placeholder="Password"
@@ -83,13 +94,15 @@ const Login = () => {
                 borderBottomColor: "grey",
                 color: "white",
               }}
-              value={password}
-              onChangeText={setPassword}
               secureTextEntry
+              onChangeText={(value) => {
+                setUserInfo({ ...userInfo, password: value });
+                setError(null);
+              }}
             />
-            {error ? <Text style={styles.errorText} color={"white"}>{error}</Text> : null}
+            {error && <Text style={styles.errorText}>{error}</Text>}
           </View>
-          <View
+          {/* <View
             style={{
               flexDirection: "row",
               justifyContent: "space-between",
@@ -120,7 +133,7 @@ const Login = () => {
                 Forgot password?
               </Text>
             </TouchableOpacity>
-          </View>
+          </View> */}
           <TouchableOpacity
             style={{
               backgroundColor: "rgba(128, 128, 128, 0.6)",
@@ -154,6 +167,7 @@ const Login = () => {
                 alignItems: "center",
                 justifyContent: "center",
               }}
+              onPress={() => alert("Instagram login not implemented")}
             >
               <AntDesign name="instagram" size={24} color="gold" />
             </TouchableOpacity>
@@ -166,6 +180,7 @@ const Login = () => {
                 alignItems: "center",
                 justifyContent: "center",
               }}
+              onPress={() => alert("X login not implemented")}
             >
               <FontAwesome6 name="square-x-twitter" size={24} color="gold" />
             </TouchableOpacity>
@@ -178,6 +193,7 @@ const Login = () => {
                 alignItems: "center",
                 justifyContent: "center",
               }}
+              onPress={() => alert("Telegram login not implemented")}
             >
               <EvilIcons
                 name="sc-telegram"
@@ -219,9 +235,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  logo: {
-    width: 150,
-    height: 150,
+  errorText: {
+    color: "red",
+    marginTop: 5,
   },
 });
 
