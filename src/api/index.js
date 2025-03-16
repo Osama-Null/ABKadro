@@ -5,7 +5,6 @@ const instance = axios.create({
   baseURL: "http://192.168.1.181:5208/api",
 });
 
-export default instance;
 //==========================================================
 instance.interceptors.request.use(
   async (config) => {
@@ -20,3 +19,4 @@ instance.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+export default instance;

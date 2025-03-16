@@ -13,18 +13,42 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import requests from "../../data/requests"; // Import requests data
+import { getEmployeeDetails } from "../../api/admins";
 
-const HREmployeeDetails = ({ route }) => {
+const HREmployeeDetails = () => {
   const navigation = useNavigation();
-  const { employee } = route.params;
+  const route = useRoute();
+  const { employeeId } = route.params; // Expecting employeeId from navigation
 
-  const employeeContact = employee.contactInfo;
+  // Fetch employee details
+  const {
+    data: employee,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["employeeDetails", employeeId],
+    queryFn: () => getEmployeeDetails(employeeId),
+  });
 
-  // Filter requests related to this employee
-  const employeeRequests = requests.filter(
-    (req) => req.employeeId === employee.id
-  );
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ color: "white", textAlign: "center", marginTop: 20 }}>
+          Loading...
+        </Text>
+      </View>
+    );
+  }
 
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ color: "red", textAlign: "center", marginTop: 20 }}>
+          Error: {error.message}
+        </Text>
+      </View>
+    );
+  }
   return (
     <View style={styles.container}>
       {/* Header Section with Employee Details */}
@@ -48,7 +72,7 @@ const HREmployeeDetails = ({ route }) => {
           width: "100%",
           alignItems: "center",
           gap: 10,
-          marginVertical: 20
+          marginVertical: 20,
         }}
       >
         <View flexDirection={"row"}>
@@ -70,34 +94,39 @@ const HREmployeeDetails = ({ route }) => {
         </View>
         <View flexDirection={"row"} gap={50}>
           <View flexDirection={"row"}>
-          <FontAwesome
-            name="phone"
-            size={20}
-            color={"gold"}
-            style={styles.icon}
-          />
-          <Text
-            style={{
-              color: "white",
-              fontSize: 15,
-            }}
-          >
-            {"   "}
-            {employeeContact.phone}
-          </Text>
-        </View>
-        <View flexDirection={"row"}>
-          <AntDesign name="star" size={20} color={"gold"} style={styles.icon} />
-          <Text
-            style={{
-              color: "white",
-              fontSize: 15,
-            }}
-          >
-            {"   "}
-            {employee.rating}/5
-          </Text>
-        </View>
+            <FontAwesome
+              name="phone"
+              size={20}
+              color={"gold"}
+              style={styles.icon}
+            />
+            <Text
+              style={{
+                color: "white",
+                fontSize: 15,
+              }}
+            >
+              {"   "}
+              {employeeContact.phone}
+            </Text>
+          </View>
+          <View flexDirection={"row"}>
+            <AntDesign
+              name="star"
+              size={20}
+              color={"gold"}
+              style={styles.icon}
+            />
+            <Text
+              style={{
+                color: "white",
+                fontSize: 15,
+              }}
+            >
+              {"   "}
+              {employee.rating}/5
+            </Text>
+          </View>
         </View>
       </View>
 

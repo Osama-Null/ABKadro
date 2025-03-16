@@ -4,11 +4,8 @@ import employees from "../../data/employees";
 import requests from "../../data/requests";
 import { BlurView } from "expo-blur";
 import HRRequestItem from "./HRRequestItem";
-import { RequestsContext } from "../../context/RequestsContext";
 
 const HRRequestList = () => {
-  const { requests } = useContext(RequestsContext);
-
   const Employees = employees.map((employee) => ({
     empId: employee.id,
     empName: employee.name,

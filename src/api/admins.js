@@ -19,15 +19,15 @@ const getAllEmployees = async () => {
   return response.data;
 };
 
-/**
- * Fetches details of a specific employee, including their requests (Admin only).
- * @param {string} employeeId - The ID of the employee.
- * @returns {Promise<Object>} Employee object with requests.
- */
-const getEmployeeDetails = async (employeeId) => {
-  const response = await instance.get(`/users/employee/${employeeId}`);
-  return response.data;
-};
+// /**
+//  * Fetches details of a specific employee, including their requests (Admin only).
+//  * @param {string} employeeId - The ID of the employee.
+//  * @returns {Promise<Object>} Employee object with requests.
+//  */
+// const getEmployeeDetails = async (employeeId) => {
+//   const response = await instance.get(`/users/employee/${employeeId}`);
+//   return response.data;
+// };
 
 /**
  * Fetches profile details of the logged-in user (Employee or Admin).
@@ -70,8 +70,37 @@ const respondToRequest = async (
   return response.data; // Returns {}
 };
 
+// ============= Aziz Trial =============
+// Fetches all employees w/o requests
+const getEmployees = async () => {
+  try {
+    const response = await instance.get("/users/all-employees");
+    return response.data; // Expecting an array of UserResponseDTO
+  } catch (error) {
+    console.error(
+      "Error fetching employees:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+// Fetches details of a specific employee, including their requests
+const getEmployeeDetails = async (employeeId) => {
+  try {
+    const response = await instance.get(`/users/employee/${employeeId}`);
+    return response.data; // Expecting a UserResponseDTO with Requests
+  } catch (error) {
+    console.error(
+      `Error fetching employee ${employeeId}:`,
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
 // Export all functions
 export {
+  getEmployees,
   getAllRequests,
   getAllEmployees,
   getEmployeeDetails,
