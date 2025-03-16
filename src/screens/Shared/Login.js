@@ -20,8 +20,8 @@ import { login } from "../../api/auth";
 
 const Login = ({ setIsAuth, setRole }) => {
   const [userInfo, setUserInfo] = useState({});
-  const [error, setError] = useState(null);
-  const { mutate } = useMutation({
+  const [error, setError] = useState([]);
+  const { mutate, isError } = useMutation({
     mutationKey: ["login"],
     mutationFn: () => login(userInfo),
     onSuccess: (data) => {
@@ -29,8 +29,10 @@ const Login = ({ setIsAuth, setRole }) => {
       setRole(data.role);
       alert("Welcome");
     },
-    onError: () => {
+    onError: (error) => {
       setError("Something went wrong");
+      alert(isError);
+      console.log(isError, error);
     },
   });
 
