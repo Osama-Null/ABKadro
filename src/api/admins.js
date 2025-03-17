@@ -29,15 +29,6 @@ const getAllEmployees = async () => {
 //   return response.data;
 // };
 
-/**
- * Fetches profile details of the logged-in user (Employee or Admin).
- * @returns {Promise<Object>} User object.
- */
-const getMyProfile = async () => {
-  const response = await instance.get("/users/me");
-  return response.data;
-};
-
 // ============= POST Requests =============
 /**
  * Responds to a request (Admin only).
@@ -104,6 +95,5 @@ export {
   getAllRequests,
   getAllEmployees,
   getEmployeeDetails,
-  getMyProfile,
   respondToRequest,
 };

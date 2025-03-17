@@ -29,7 +29,11 @@ const HREmployeeList = ({ search, employees }) => {
     </View>
   );
 };
-
+// // API
+//  const { data, isLoading, isError } = useQuery({
+//    queryKey: ["fetchAllEmployees"],
+//    queryFn: () => getAllEmployees(),
+//  });
 // const EmployeesAPI = data
 //   ?.filter((employee) => {
 //     return employee.name.toLowerCase().includes(search.toLowerCase());

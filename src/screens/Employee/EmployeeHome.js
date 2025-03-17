@@ -7,186 +7,106 @@ import {
   Image,
   TextInput,
   FlatList,
+  Modal,
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import employees from "../../data/employees";
-import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { Picker } from "@react-native-picker/picker";
+import EmployeeMyRequestList from "../../components/Employee/EmployeeMyRequestList";
+import { useQuery } from "@tanstack/react-query";
+import { getMyProfile } from "../../api/shared";
+
+import Entypo from "@expo/vector-icons/Entypo";
+
 
 const EmployeeHome = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filter, setFilter] = useState("All");
-  const [showPicker, setShowPicker] = useState(false);
-  const [requests, setRequests] = useState([
-    { id: 1, title: "Annual Leave Request", status: "Pending" },
-    { id: 2, title: "Medical Leave Request", status: "Accepted" },
-    { id: 3, title: "Complaint Submission", status: "Rejected" },
-  ]);
-
   const navigation = useNavigation();
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["fetchMyProfile"],
+    queryFn: () => getMyProfile(),
+  });
+  
+  // Handle loading and error states
+  // if (isLoading) {
+  //   return <Text style={styles.loadingText}>Loading...</Text>;
+  // }
 
-  const Employees = employees.map((employee) => ({
-    empId: employee.id,
-    empName: employee.name,
-    empImage: employee.image,
-    empRating: employee.rating,
-    empDepartment: employee.department,
-    empHireDate: employee.hireDate,
-    empEmail: employee.contactInfo.email,
-    empPhone: employee.contactInfo.phone,
-    empPosition: employee.position,
-    empDescription: employee.description,
-    empStatus: employee.status,
-    empSkills: employee.skills.map((skill) => ({
-      skillId: skill.id,
-      skillName: skill.name,
-      skillProficiency: skill.proficiency,
-      skillYearsExperience: skill.yearsExperience,
-    })),
-    empHrSpecific: employee.hrSpecific
-      ? {
-          certifications: employee.hrSpecific.certifications,
-          yearsInHR: employee.hrSpecific.yearsInHR,
-          specialties: employee.hrSpecific.specialties,
-        }
-      : null,
-  }));
+  // if (isError) {
+  //   return <Text style={styles.errorText}>Error fetching profile</Text>;
+  // }
 
-  console.log(Employees); // For debugging
-
-  const filteredRequests = requests
-    .filter((req) =>
-      req.title.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-    .filter((req) => filter === "All" || req.status === filter);
-
-  const sortedRequests = [...filteredRequests].sort((a, b) =>
-    a.status === "Pending" ? -1 : 1
-  );
-
+  // const MyProfile = data;
+  const MyProfile = data;
+  console.log("\nMy profile data: ", MyProfile);
   return (
     <View style={styles.container}>
       <ScrollView>
+        {/* Header */}
         <View
           flex={1}
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
             width: "100%",
-            padding: 15,
+            marginBottom: "5%",
+            alignItems: "center",
           }}
         >
           <View
+            flexDirection={"row"}
             style={{
-              justifyContent: "center",
+              flexDirection: "row",
+              gap: 15,
             }}
           >
-            <Text
+            {/* img */}
+            <TouchableOpacity
               style={{
-                color: "white",
+                borderRadius: 100,
+                overflow: "hidden",
+                width: 50,
+                height: 50,
+              }}
+              onPress={() => navigation.navigate("HRProfileInfo", MyProfile)}
+            >
+              <Image
+                source={require("../../../assets/profile.png")}
+                style={{ width: 50, height: 50 }}
+              />
+              {/* {MyProfile.profilePicture ? (
+              <Image
+                source={{ uri: MyProfile.profilePicture }}
+                style={{ width: 50, height: 50 }}
+              />
+            ) : (
+              <Image
+                source={require("../../../assets/profile.png")}
+                style={{ width: 50, height: 50 }}
+              />
+            )} */}
+            </TouchableOpacity>
+            <View
+              style={{
+                justifyContent: "center",
               }}
             >
-              Welcome, {Employees[0].empName}
-            </Text>
-            <Text
-              style={{
-                fontSize: 20,
-                color: "white",
-                fontWeight: "bold",
-              }}
-            >
-              Dashboard
-            </Text>
+              <Text
+                style={{
+                  color: "gray",
+                  fontSize: 20,
+                }}
+              >
+                Welcome, John{/*{MyProfile.firstName} {MyProfile.lastName} */}
+              </Text>
+              <Text style={styles.header}>Dashboard</Text>
+            </View>
           </View>
-          <TouchableOpacity
-            style={{
-              backgroundColor: "yellow",
-              borderRadius: 100,
-              overflow: "hidden",
-              width: 50,
-              height: 50,
-            }}
-            onPress={() =>
-              navigation.navigate("ProfileInfo", { employee: Employees[0] })
-            }
-          >
-            <Image
-              source={{ uri: Employees[0].empImage }}
-              width={50}
-              height={50}
-            />
+          <TouchableOpacity>
+            <Entypo name="chat" size={30} color="white" />
           </TouchableOpacity>
         </View>
 
-        {/* Search Bar & Menu */}
-        <View style={styles.section}>
-          <View style={styles.searchContainer}>
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-            />
-            <TouchableOpacity onPress={() => setShowPicker(!showPicker)}>
-              <FontAwesome5 name="filter" size={24} color="white" />
-            </TouchableOpacity>
-          </View>
-          {showPicker && (
-            <Picker
-              selectedValue={filter}
-              onValueChange={(itemValue) => {
-                setFilter(itemValue);
-                setShowPicker(false);
-              }}
-              style={styles.picker}
-            >
-              <Picker.Item label="All" value="All" />
-              <Picker.Item label="Pending" value="Pending" />
-              <Picker.Item label="Accepted" value="Accepted" />
-              <Picker.Item label="Rejected" value="Rejected" />
-            </Picker>
-          )}
-        </View>
-
-        {/* Ongoing Requests */}
-        <View style={styles.section}>
-          <Text style={styles.header}>Recent Requests</Text>
-          <FlatList
-            data={sortedRequests}
-            keyExtractor={(item) => item.id.toString()}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.requestCard}
-                onPress={() =>
-                  navigation.navigate("EmployeeRequestDetails", {
-                    ...item,
-                    empImage: Employees[0].empImage,
-                  })
-                }
-              >
-                <Text style={styles.requestTitle}>{item.title}</Text>
-                <Text
-                  style={[
-                    styles.status,
-                    item.status === "Accepted"
-                      ? styles.accepted
-                      : item.status === "Rejected"
-                      ? styles.rejected
-                      : styles.pending,
-                  ]}
-                >
-                  {item.status}
-                </Text>
-              </TouchableOpacity>
-            )}
-          />
-        </View>
-
-        {/* Other Sections */}
-        <View style={styles.section}></View>
+        
+        <EmployeeMyRequestList/>
       </ScrollView>
     </View>
   );
@@ -197,6 +117,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#001D3D",
     padding: 20,
+    paddingTop: 40,
   },
   section: {
     flex: 1,
@@ -253,6 +174,7 @@ const styles = StyleSheet.create({
   pending: {
     color: "orange",
   },
+  
 });
 
 export default EmployeeHome;

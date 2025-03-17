@@ -10,6 +10,7 @@ import AuthNavigation from "./src/navigation/AuthNavigation/AuthNavigation";
 import { getToken, getRole } from "./src/api/storage";
 import UserContext from "./src/context/UserContext";
 
+
 const queryClient = new QueryClient();
 
 export default function App() {
