@@ -20,7 +20,7 @@ import { login } from "../../api/auth";
 
 const Login = ({ setIsAuth, setRole }) => {
   const [userInfo, setUserInfo] = useState({});
-  const [error, setError] = useState([]);
+  const [error, setError] = useState(null);
   const { mutate, isError } = useMutation({
     mutationKey: ["login"],
     mutationFn: () => login(userInfo),
@@ -30,15 +30,14 @@ const Login = ({ setIsAuth, setRole }) => {
       alert("Welcome");
     },
     onError: (error) => {
-      setError("Something went wrong");
-      alert(isError);
-      console.log(isError, error);
+      setError(error.message || "Something went wrong");
+      console.log("\nError message: ", error, "\n");
     },
   });
 
   const handleLogin = () => {
     if (!userInfo.email || !userInfo.password) {
-      alert("Please enter email and password");
+      setError("Please enter email and password");
       return;
     }
     setError(null);

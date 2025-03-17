@@ -11,7 +11,7 @@ const HREmployeeList = ({ search }) => {
     queryKey: ["fetchAllEmployees"],
     queryFn: () => getAllEmployees(),
   });
-  if (data == null) {
+  if (data != null) {
     console.log("All Fetch 👇 ", data);
   } else console.log("☹️☹️☹️☹️☹️☹️☹️ No Data ☹️☹️☹️☹️☹️☹️☹️", isError);
 
@@ -23,7 +23,7 @@ const HREmployeeList = ({ search }) => {
       return <HREmployeeItem key={employee.id} employee={employee} />;
     });
 
-  if (EmployeesAPI == null) {
+  if (EmployeesAPI != null) {
     console.log("All Fetched Employees 👨‍💼", data);
   } else console.log("❌☹️ No Employees ☹️❌\n", isError);
   //==========================================================

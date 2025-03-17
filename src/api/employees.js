@@ -6,11 +6,6 @@ const getMyRequests = async () => {
   return response.data;
 };
 
-const getMyProfile = async () => {
-  const response = await instance.get("/users/me");
-  return response.data;
-};
-
 const getMyCredits = async () => {
   const response = await instance.get("/users/my-credit");
   return response.data;
@@ -87,7 +82,6 @@ const addMessageToRequest = async (
 export {
   // GET Endpoints
   getMyRequests,
-  getMyProfile,
   getMyCredits,
   // POST Endpoints
   createVacationRequest,

@@ -309,6 +309,7 @@ const HRHome = () => {
             </BlurView>
           </View>
         </View>
+
         {/* Req */}
         <HRRequestList />
       </ScrollView>

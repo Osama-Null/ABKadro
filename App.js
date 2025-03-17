@@ -8,6 +8,7 @@ import EmployeeNavigation from "./src/navigation/Employee/EmployeeNavigation";
 import HRNavigation from "./src/navigation/HR/HRNavigation";
 import UserContext from "./src/context/UserContext";
 import AuthNavigation from "./src/navigation/AuthNavigation/AuthNavigation";
+import EmployeeHome from "./src/screens/Employee/EmployeeHome";
 
 const queryClient = new QueryClient();
 
