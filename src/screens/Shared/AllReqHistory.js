@@ -6,12 +6,10 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import { RequestsContext } from "../../context/RequestsContext";
 import AllReqHistoryList from "../../components/Shared/AllReqHistoryList";
 import employees from "../../data/employees"; // Import employees data
 
 const AllReqHistory = () => {
-  const { requests } = useContext(RequestsContext); // Access shared requests state
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("All"); // "All", "Approved", "Rejected"
 

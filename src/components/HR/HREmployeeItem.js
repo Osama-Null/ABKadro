@@ -4,17 +4,28 @@ import { useNavigation } from "@react-navigation/native";
 
 const HREmployeeItem = ({ employee }) => {
   const navigation = useNavigation();
+  // Fallback image URI if ProfilePicture is null
+  const imageUri = employee.ProfilePicture
+    ? employee.ProfilePicture
+    : "https://via.placeholder.com/50";
 
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate("HREmployeeDetails", { employee })}
+      onPress={() =>
+        navigation.navigate("HREmployeeDetails", {
+          employeeId: employee.Id, // Pass Id for fetching details
+          employeeName: `${employee.FirstName} ${employee.LastName || ""}`, // Pass full name
+        })
+      }
       style={styles.card}
     >
-      <Image source={{ uri: employee.image }} style={styles.image} />
+      <Image source={{ uri: imageUri }} style={styles.image} />
       <View style={styles.info}>
-        <Text style={styles.name}>{employee.name}</Text>
+        <Text style={styles.name}>
+          {employee.FirstName} {employee.LastName || ""}
+        </Text>
         <Text style={styles.details}>
-          {employee.department} - {employee.position}
+          {employee.Department || "N/A"} - {employee.Position || "N/A"}
         </Text>
       </View>
     </TouchableOpacity>
@@ -50,9 +61,3 @@ const styles = StyleSheet.create({
 });
 
 export default HREmployeeItem;
-
-
-
-
-
-

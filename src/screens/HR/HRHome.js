@@ -18,11 +18,9 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Octicons from "@expo/vector-icons/Octicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
-import { RequestsContext } from "../../context/RequestsContext";
 
 const HRHome = () => {
   const navigation = useNavigation();
-  const { requests } = useContext(RequestsContext);
   // Mapping
   const Employees = employees.map((employee) => ({
     empId: employee.id,

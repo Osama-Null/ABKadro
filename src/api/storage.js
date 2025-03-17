@@ -1,7 +1,5 @@
 import { setItemAsync, getItemAsync, deleteItemAsync } from "expo-secure-store";
 
-setItemAsync;
-
 const setToken = async (token) => {
   await setItemAsync("token", token);
 };
@@ -15,4 +13,17 @@ const deleteToken = async () => {
   await deleteItemAsync("token");
 };
 
-export { setToken, getToken, deleteToken };
+const setRole = async (role) => {
+  await setItemAsync("role", role);
+};
+
+const getRole = async () => {
+  const role = await getItemAsync("role");
+  return role;
+};
+
+const deleteRole = async () => {
+  await deleteItemAsync("role");
+};
+
+export { setToken, getToken, deleteToken, setRole, getRole, deleteRole };

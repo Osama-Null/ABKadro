@@ -3,18 +3,49 @@ import { View, Text, TextInput, StyleSheet, Animated } from "react-native";
 import HREmployeeList from "../../components/HR/HREmployeeList";
 import { BlurView } from "expo-blur";
 import { PieChart } from "react-native-gifted-charts";
-import employees from "../../data/employees";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useQuery } from "@tanstack/react-query";
+import { getEmployees } from "../../api/admins";
 
 const HRAllEmployee = () => {
   const [search, setSearch] = useState("");
 
+  // Fetch all employees from the API
+  const {
+    data: employees,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["getEmployees"],
+    queryFn: getEmployees,
+  });
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ color: "white", textAlign: "center", marginTop: 20 }}>
+          Loading...
+        </Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.container}>
+        <Text style={{ color: "red", textAlign: "center", marginTop: 20 }}>
+          Error: {error.message}
+        </Text>
+      </View>
+    );
+  }
+
   // Calculate employee statistics
   const activeEmployees = employees.filter(
-    (emp) => emp.status === "Active"
+    (emp) => emp.isVacation === false
   ).length;
   const inactiveEmployees = employees.filter(
-    (emp) => emp.status === "Inactive"
+    (emp) => emp.isVacation === true
   ).length;
   const totalEmployees = employees.length;
 

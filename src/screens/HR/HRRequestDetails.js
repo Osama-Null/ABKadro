@@ -9,14 +9,12 @@ import {
 import React, { useState, useContext } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
-import { RequestsContext } from "../../context/RequestsContext";
 import { BlurView } from "expo-blur";
 import { Picker } from "@react-native-picker/picker";
 
 const HRRequestDetails = ({ route }) => {
   const navigation = useNavigation();
   const { request, employee } = route.params;
-  const { updateRequest } = useContext(RequestsContext);
 
   const [status, setStatus] = useState(request.status);
   const [comments, setComments] = useState(request.comments || "");
