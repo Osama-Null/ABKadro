@@ -17,22 +17,20 @@ import { getMyProfile } from "../../api/shared";
 
 import Entypo from "@expo/vector-icons/Entypo";
 
-
 const EmployeeHome = () => {
   const navigation = useNavigation();
   const { data, isLoading, isError } = useQuery({
     queryKey: ["fetchMyProfile"],
     queryFn: () => getMyProfile(),
   });
-  
-  // Handle loading and error states
-  // if (isLoading) {
-  //   return <Text style={styles.loadingText}>Loading...</Text>;
-  // }
 
-  // if (isError) {
-  //   return <Text style={styles.errorText}>Error fetching profile</Text>;
-  // }
+  // Handle loading and error states
+  if (isLoading) {
+    return <Text style={styles.loadingText}>Loading...</Text>;
+  }
+  if (isError) {
+    return <Text style={styles.errorText}>Error fetching profile</Text>;
+  }
 
   // const MyProfile = data;
   const MyProfile = data;
@@ -66,23 +64,25 @@ const EmployeeHome = () => {
                 width: 50,
                 height: 50,
               }}
-              onPress={() => navigation.navigate("HRProfileInfo", MyProfile)}
+              onPress={() =>
+                navigation.navigate("EmployeeProfileInfo", MyProfile)
+              }
             >
-              <Image
+              {/* <Image
                 source={require("../../../assets/profile.png")}
                 style={{ width: 50, height: 50 }}
-              />
-              {/* {MyProfile.profilePicture ? (
-              <Image
-                source={{ uri: MyProfile.profilePicture }}
-                style={{ width: 50, height: 50 }}
-              />
-            ) : (
-              <Image
-                source={require("../../../assets/profile.png")}
-                style={{ width: 50, height: 50 }}
-              />
-            )} */}
+              /> */}
+              {MyProfile.profilePicture ? (
+                <Image
+                  source={{ uri: MyProfile.profilePicture }}
+                  style={{ width: 50, height: 50 }}
+                />
+              ) : (
+                <Image
+                  source={require("../../../assets/profile.png")}
+                  style={{ width: 50, height: 50 }}
+                />
+              )}
             </TouchableOpacity>
             <View
               style={{
@@ -91,11 +91,11 @@ const EmployeeHome = () => {
             >
               <Text
                 style={{
-                  color: "gray",
+                  color: "rgba(255, 255, 255, 0.86)",
                   fontSize: 20,
                 }}
               >
-                Welcome, John{/*{MyProfile.firstName} {MyProfile.lastName} */}
+                Welcome, {MyProfile.firstName} {MyProfile.lastName}
               </Text>
               <Text style={styles.header}>Dashboard</Text>
             </View>
@@ -105,8 +105,7 @@ const EmployeeHome = () => {
           </TouchableOpacity>
         </View>
 
-        
-        <EmployeeMyRequestList/>
+        <EmployeeMyRequestList />
       </ScrollView>
     </View>
   );
@@ -174,7 +173,6 @@ const styles = StyleSheet.create({
   pending: {
     color: "orange",
   },
-  
 });
 
 export default EmployeeHome;

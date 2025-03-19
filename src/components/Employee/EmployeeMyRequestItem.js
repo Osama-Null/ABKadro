@@ -1,34 +1,32 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import {
+  typeOfRequestMap,
+  typeOfVacationMap,
+  complaintTypeMap,
+} from "../../constants/enums";
 import React from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import Entypo from "@expo/vector-icons/Entypo";
-
-// Define enum mappings
-const requestTypeMap = {
-  0: "Vacation Request",
-  1: "Complaint",
-  // Add your backend mappings here
-};
-
-const vacationTypeMap = {
-  0: "Annual Leave",
-  1: "Sick Leave",
-  2: "Other",
-  // Add your backend mappings here
-};
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useNavigation } from "@react-navigation/native";
 
 const EmployeeMyRequestItem = ({ request }) => {
-  // Map integers to strings
-  const requestType = requestTypeMap[request.typeOfRequest] || "Unknown";
-  const vacationType =
-    request.typeOfVacation !== undefined
-      ? vacationTypeMap[request.typeOfVacation] || "Unknown"
-      : "N/A";
+  const navigation = useNavigation();
+  // Map request type from enum.js
+  const requestType = typeOfRequestMap[request.typeOfRequest] || "Unknown";
+  const subType =
+    request.typeOfRequest === 0
+      ? typeOfVacationMap[request.typeOfVacation] || "Unknown"
+      : complaintTypeMap[request.typeOfComplaint] || "Unknown";
 
-  // Optional: Format dates if your data includes them
+  // Dates format
   const createdAtDate = new Date(request.createdAt).toLocaleDateString();
-  const sDate = new Date(request.startDate).toLocaleDateString();
-  const eDate = new Date(request.endDate).toLocaleDateString();
+  const sDate = request.startDate
+    ? new Date(request.startDate).toLocaleDateString()
+    : "N/A";
+  const eDate = request.endDate
+    ? new Date(request.endDate).toLocaleDateString()
+    : "N/A";
   return (
     <TouchableOpacity
       style={{
@@ -47,62 +45,79 @@ const EmployeeMyRequestItem = ({ request }) => {
       <View flexDirection={"row"} gap={10}>
         {/* Type */}
         <View justifyContent={"center"}>
-          <Ionicons name="calendar-outline" size={30} color="red" />
+          {request.typeOfRequest === 0 ? (
+            <Ionicons name="calendar-outline" size={30} color="#4CAF50" />
+          ) : (
+            <MaterialCommunityIcons
+              name="note-alert"
+              size={30}
+              color="#FF3B30"
+            />
+          )}
         </View>
         {/* Info */}
         <View>
           <Text
             style={{
               color: "white",
-              fontSize: 22,
+              fontSize: 18,
               fontWeight: "bold",
             }}
           >
-            {requestType} - {vacationType}
+            {requestType} - {subType}
           </Text>
-          <View flexDirection={"row"}>
-            <Text
-              style={{
-                color: "white",
-                fontSize: 14,
-              }}
-            >
-              {sDate}
-            </Text>
-
+          {request.typeOfRequest === 0 && (
             <View
               style={{
-                transform: [{ rotate: "90deg" }],
-                width: 25,
-                height: 25,
+                flexDirection: "row",
+                gap: 5,
                 alignItems: "center",
                 justifyContent: "center",
-                bottom: 4,
               }}
             >
-              <Entypo
-                name="flow-line"
-                size={24}
-                color="white"
-                alignSelf="center"
-              />
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 14,
+                }}
+              >
+                {sDate}
+                {/* only of it's a vacation */}
+              </Text>
+
+              <View
+                style={{
+                  transform: [{ rotate: "90deg" }],
+                  width: 25,
+                  height: 25,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Entypo
+                  name="flow-line"
+                  size={24}
+                  color="#4CAF50"
+                  alignSelf="center"
+                />
+              </View>
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 14,
+                }}
+              >
+                {eDate}
+                {/* only of it's a vacation */}
+              </Text>
             </View>
-            <Text
-              style={{
-                color: "white",
-                fontSize: 14,
-              }}
-            >
-              {eDate}
-            </Text>
-          </View>
+          )}
         </View>
       </View>
 
       {/* At */}
       <View
         style={{
-          width: 150,
           alignItems: "flex-end",
         }}
       >

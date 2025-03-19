@@ -1,248 +1,239 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Button,
-  Image,
-  TouchableOpacity,
-  FlatList,
-} from "react-native";
+import Reac, { useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import employees from "../../data/employees";
-import files from "../../data/files";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import * as DocumentPicker from "expo-document-picker";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import LottieView from "lottie-react-native";
+import Entypo from "@expo/vector-icons/Entypo";
 
 const EmployeeRequestDetails = ({ route }) => {
-  const {
-    title,
-    type,
-    status,
-    description,
-    isReturned,
-    empImage,
-    empId,
-    name,
-    department,
-    email,
-    phone,
-    position,
-  } = route.params;
+  const { request } = route.params;
   const navigation = useNavigation();
+  const [message, setMessage] = useState("");
+  const [file, setFile] = useState(null);
 
-  const Employees = employees.map((employee) => ({
-    empId: employee.id,
-    empName: employee.name,
-    empImage: employee.image,
-    empRating: employee.rating,
-    empDepartment: employee.department,
-    empHireDate: employee.hireDate,
-    empEmail: employee.contactInfo.email,
-    empPhone: employee.contactInfo.phone,
-    empPosition: employee.position,
-    empDescription: employee.description,
-    empStatus: employee.status,
-    empSkills: employee.skills.map((skill) => ({
-      skillId: skill.id,
-      skillName: skill.name,
-      skillProficiency: skill.proficiency,
-      skillYearsExperience: skill.yearsExperience,
-    })),
-    empHrSpecific: employee.hrSpecific
-      ? {
-          certifications: employee.hrSpecific.certifications,
-          yearsInHR: employee.hrSpecific.yearsInHR,
-          specialties: employee.hrSpecific.specialties,
-        }
-      : null,
-  }));
-
-  // Get the current date
-  const currentDate = new Date();
-  const formattedDate = currentDate.toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-
-  // State to manage file visibility
-  const [showFiles, setShowFiles] = useState(false);
-
-  // Function to handle icon click
-  const handleIconClick = () => {
-    const requestFiles = files.find(
-      (file) => file.requestId === route.params.id
-    );
-    if (requestFiles && requestFiles.messages.length > 0) {
-      const firstFilePath = requestFiles.messages[0].files[0].filePath;
-      console.log(`Opening file: ${firstFilePath}`);
-      // Navigate to a new screen or display the file
-      navigation.navigate("FileViewer", { filePath: firstFilePath });
+  // File selection
+  const pickFile = async () => {
+    const result = await DocumentPicker.getDocumentAsync({});
+    if (result.type === "success") {
+      setFile(result);
     }
   };
 
-  // Filter files for the current request
-  const requestFiles = files.filter(
-    (file) => file.requestId === route.params.id
-  );
+  // Function to submit message and/or file
+  const submitMessage = async () => {
+    const formData = new FormData();
+    formData.append("RequestId", request.requestId);
+    if (message) formData.append("DescriptionBody", message);
+    if (file) {
+      formData.append("Files", {
+        uri: file.uri,
+        name: file.name,
+        type: file.mimeType || "application/octet-stream",
+      });
+    }
+
+    try {
+      const response = await fetch("YOUR_API_URL/requests/add-message", {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          // Add authentication headers if required (e.g., Authorization: Bearer <token>)
+        },
+      });
+      if (response.ok) {
+        console.log("Message submitted successfully");
+        setMessage(""); // Clear input after submission
+        setFile(null); // Clear file after submission
+      } else {
+        console.error("Failed to submit message:", response.status);
+      }
+    } catch (error) {
+      console.error("Error submitting message:", error);
+    }
+  };
 
   return (
     <View style={styles.container}>
-      {/* Header with Employee Image */}
+      {/* Header */}
       <View
         style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
+          flex: 1,
+          borderRadius: 10,
           width: "100%",
-          padding: 15,
+          borderBottomLeftRadius: 60,
+          borderBottomRightRadius: 60,
+          overflow: "hidden",
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#0F4277",
         }}
       >
-        <View
-          style={{
-            justifyContent: "center",
-          }}
-        >
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.date}>{formattedDate}</Text>
-        </View>
         <TouchableOpacity
           style={{
-            backgroundColor: "yellow",
-            borderRadius: 100,
-            overflow: "hidden",
-            width: 50,
-            height: 50,
+            position: "absolute",
+            top: 20,
+            left: 20,
+            zIndex: 999,
           }}
-          onPress={() =>
-            navigation.navigate("ProfileInfo", {
-              employee: Employees[0],
-            })
-          }
+          onPress={() => navigation.goBack()}
         >
-          <Image source={{ uri: empImage }} style={{ width: 50, height: 50 }} />
+          <Ionicons name="arrow-back" size={30} color="white" />
         </TouchableOpacity>
-      </View>
 
-      <View style={styles.infoRow}>
-        <Text style={styles.type}>Type: {type}</Text>
+        {request.typeOfRequest === 0 ? (
+          <LottieView
+            source={require("../../../assets/Animation_Calendar.json")}
+            autoPlay
+            loop={true}
+            style={{ width: 200, height: 200 }}
+          />
+        ) : (
+          <LottieView
+            source={require("../../../assets/Animation_Note.json")}
+            autoPlay
+            loop={true}
+            style={{ width: 200, height: 200 }}
+          />
+        )}
         <Text
-          style={[
-            styles.status,
-            status === "Rejected" ? styles.rejected : styles.accepted,
-          ]}
+          style={{
+            color: "#03fcc6",
+            fontWeight: "bold",
+            fontSize: 30,
+          }}
         >
-          {status}
+          {request.typeOfRequest === 0 ? "Vacation" : "Complaint"} request
         </Text>
       </View>
 
-      {/* Display Messages */}
-      {requestFiles.map((requestFile) =>
-        requestFile.messages.map((message) => (
-          <View key={message.messageId} style={styles.messageContainer}>
-            <Text style={styles.sender}>
-              {isNaN(message.userId) ? "Admin" : "You"}
-            </Text>
-            <View style={styles.descriptionContainer}>
-              <Text style={styles.description}>
-                {message.descriptionBody || "No additional details available."}
-              </Text>
+      {/* Request Details */}
+      <View style={styles.container2}>
+        <View style={styles.detailsWrapper}>
+          {/* Info Section*/}
+          <View style={styles.infoSection}>
+            {/* Row 1 */}
+            <View style={styles.infoRow}>
+              <View style={styles.infoButton}>
+                <Text style={styles.label}>Type</Text>
+                <Text style={styles.value}>
+                  {request.typeOfRequest === 0 ? "Vacation" : "Complaint"}
+                </Text>
+              </View>
+              <View style={styles.infoButton}>
+                <Text style={styles.label}>Created at</Text>
+                <Text style={styles.value}>
+                  {new Date(request.createdAt).toLocaleDateString()}
+                </Text>
+              </View>
+            </View>
+            {/* Row 2 */}
+            <View style={styles.infoRow}>
+              <View style={styles.infoButton}>
+                <Text style={styles.label}>Label 3</Text>
+                <Text style={styles.value}>Value 3</Text>
+              </View>
+              <View style={styles.infoButton}>
+                <Text style={styles.label}>Label 4</Text>
+                <Text style={styles.value}>Value 4</Text>
+              </View>
             </View>
           </View>
-        ))
-      )}
 
-      {/* Clickable Icon */}
-      <TouchableOpacity style={styles.iconContainer} onPress={handleIconClick}>
-        <MaterialCommunityIcons name="paperclip" size={24} color="white" />
-      </TouchableOpacity>
-
-      {/* Display Files */}
-      {showFiles && (
-        <FlatList
-          data={requestFiles}
-          keyExtractor={(item) => item.messageId.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.fileContainer}>
-              {item.messages.map((message) => (
-                <View key={message.messageId} style={styles.messageContainer}>
-                  <Text style={styles.messageText}>
-                    {message.descriptionBody}
-                  </Text>
-                  {message.files.map((file) => (
-                    <TouchableOpacity
-                      key={file.messageFileId}
-                      onPress={() =>
-                        console.log(`Opening file: ${file.filePath}`)
-                      }
-                    >
-                      <Text style={styles.fileText}>{file.fileName}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              ))}
+          {/* Date Range */}
+          {request.typeOfRequest === 0 && (
+            <View style={styles.dateSection}>
+              <Text style={styles.dateText}>
+                {request.startDate
+                  ? new Date(request.startDate).toLocaleDateString()
+                  : "N/A"}
+              </Text>
+              <View
+                style={{
+                  transform: [{ rotate: "90deg" }],
+                  width: 25,
+                  height: 25,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Entypo
+                  name="flow-line"
+                  size={24}
+                  color="gold"
+                  alignSelf="center"
+                />
+              </View>
+              <Text style={styles.dateText}>
+                {request.endDate
+                  ? new Date(request.endDate).toLocaleDateString()
+                  : "N/A"}
+              </Text>
             </View>
           )}
-        />
-      )}
-
-      {/* Add Info Button - Only if Returned */}
-      {isReturned && (
-        <View style={styles.buttonContainer}>
-          <Button
-            title="Add Info"
-            onPress={() => console.log("Adding info...")}
-            color="#FF8C00"
-          />
         </View>
-      )}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: "#001D3D" },
-  title: { fontSize: 22, fontWeight: "bold", color: "#fff" },
-  date: { fontSize: 16, color: "#fff", marginBottom: 10 },
+  container: {
+    flex: 1,
+    backgroundColor: "#001D3D",
+    alignItems: "center",
+  },
+  container2: {
+    flex: 2,
+    backgroundColor: "#001D3D",
+    width: "100%",
+    paddingHorizontal: 20,
+  },
+  detailsWrapper: {
+    marginVertical: 70,
+    flex: 1,
+  },
   infoRow: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: 15,
+    marginBottom: 20,
   },
-  type: { fontSize: 18, color: "#FF6347" },
-  status: { fontSize: 18, fontWeight: "bold" },
-  accepted: { color: "green" },
-  rejected: { color: "red" },
-  descriptionContainer: {
-    padding: 15,
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    minHeight: 100,
-  },
-  description: { fontSize: 16, color: "#000" },
-  sender: { fontSize: 14, fontWeight: "bold", color: "#fff", marginBottom: 5 },
-  iconContainer: {
-    marginTop: 20,
-    alignItems: "center",
-  },
-  fileContainer: {
-    marginTop: 20,
-    backgroundColor: "#fff",
-    borderRadius: 10,
+  infoButton: {
+    flex: 1,
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    borderRadius: 5,
     padding: 10,
+    marginHorizontal: 5,
+    alignItems: "center",
+    justifyContent: "center",
   },
-  messageContainer: {
-    marginBottom: 10,
-  },
-  messageText: {
-    fontSize: 16,
-    color: "#000",
-  },
-  fileText: {
+  label: {
+    color: "gold",
+    fontWeight: "bold",
     fontSize: 14,
-    color: "#1E90FF",
-    textDecorationLine: "underline",
   },
-  buttonContainer: { marginTop: 20, alignSelf: "center" },
+  value: {
+    color: "white",
+    fontSize: 16,
+    marginTop: 5,
+  },
+  dateSection: {
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    borderRadius: 5,
+    padding: 15,
+    alignItems: "center",
+    marginHorizontal: 5,
+    flexDirection: "row",
+    gap: 40,
+    justifyContent: "center",
+  },
+  dateText: {
+    color: "white",
+    fontSize: 14,
+    marginVertical: 2,
+    fontWeight: "bold",
+  },
 });
 
 export default EmployeeRequestDetails;

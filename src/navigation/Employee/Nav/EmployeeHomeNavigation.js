@@ -38,11 +38,6 @@ const EmployeeHomeNavigation = () => {
         component={FileViewer}
         options={{ headerShown: false }}
       />
-      <Stack.Screen
-        name="ProfileInfo"
-        component={EmployeeProfileInfo}
-        options={{ headerShown: false }}
-      />
     </Stack.Navigator>
   );
 };

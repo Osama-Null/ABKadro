@@ -60,7 +60,6 @@ const HRHome = () => {
     reqDetails: request.details,
     reqComments: request.comments,
   }));
-  console.log(Employees); // For debugging
 
   // Calculate totals
   const totalPending = Requests.filter(

@@ -27,7 +27,6 @@ const Login = ({ setIsAuth, setRole }) => {
     onSuccess: (data) => {
       setIsAuth(true);
       setRole(data.role);
-      alert("Welcome");
     },
     onError: (error) => {
       setError(error.message || "Something went wrong");
@@ -73,7 +72,7 @@ const Login = ({ setIsAuth, setRole }) => {
         }}
       >
         <View style={{ gap: 30, marginTop: 50 }}>
-          <View style={{ gap: 20 }}>
+          <View style={{ gap: 30 }}>
             <TextInput
               placeholder="Email"
               placeholderTextColor={"grey"}
@@ -142,67 +141,84 @@ const Login = ({ setIsAuth, setRole }) => {
               justifyContent: "center",
               borderRadius: 15,
               width: "100%",
-              height: "15%",
+              height: 45,
+              marginTop: 20,
             }}
             onPress={handleLogin}
           >
-            <Text style={{ color: "white", fontWeight: "bold" }}>Login</Text>
+            <Text style={{ color: "white", fontWeight: "bold", fontSize: 20 }}>
+              Login
+            </Text>
           </TouchableOpacity>
 
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              width: "50%",
-              alignItems: "center",
-              alignSelf: "center",
-              marginTop: 20,
-            }}
-          >
-            <TouchableOpacity
+          <View justifyContent={"space-between"} height="250">
+            <View
               style={{
-                backgroundColor: "rgba(128, 128, 128, 0.6)",
-                width: 40,
-                height: 40,
-                borderRadius: 10,
+                flexDirection: "row",
+                justifyContent: "space-between",
+                width: "50%",
                 alignItems: "center",
-                justifyContent: "center",
+                alignSelf: "center",
+                marginTop: 20,
               }}
-              onPress={() => alert("Instagram login not implemented")}
             >
-              <AntDesign name="instagram" size={24} color="gold" />
-            </TouchableOpacity>
-            <TouchableOpacity
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "rgba(128, 128, 128, 0.6)",
+                  width: 40,
+                  height: 40,
+                  borderRadius: 10,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                onPress={() => alert("Instagram login not implemented")}
+              >
+                <AntDesign name="instagram" size={24} color="gold" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "rgba(128, 128, 128, 0.6)",
+                  width: 40,
+                  height: 40,
+                  borderRadius: 10,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                onPress={() => alert("X login not implemented")}
+              >
+                <FontAwesome6 name="square-x-twitter" size={24} color="gold" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={{
+                  backgroundColor: "rgba(128, 128, 128, 0.6)",
+                  width: 40,
+                  height: 40,
+                  borderRadius: 10,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+                onPress={() => alert("Telegram login not implemented")}
+              >
+                <EvilIcons
+                  name="sc-telegram"
+                  size={30}
+                  color="gold"
+                  marginBottom={8}
+                />
+              </TouchableOpacity>
+            </View>
+            <View
+              alignItems={"center"}
+              justifyContent={"center"}
               style={{
-                backgroundColor: "rgba(128, 128, 128, 0.6)",
-                width: 40,
-                height: 40,
-                borderRadius: 10,
-                alignItems: "center",
-                justifyContent: "center",
+                height: 100,
               }}
-              onPress={() => alert("X login not implemented")}
             >
-              <FontAwesome6 name="square-x-twitter" size={24} color="gold" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={{
-                backgroundColor: "rgba(128, 128, 128, 0.6)",
-                width: 40,
-                height: 40,
-                borderRadius: 10,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-              onPress={() => alert("Telegram login not implemented")}
-            >
-              <EvilIcons
-                name="sc-telegram"
-                size={30}
-                color="gold"
-                marginBottom={8}
+              <Image
+                source={require("../../../assets/logo.png")}
+                style={{ width: 80, height: 80 }}
               />
-            </TouchableOpacity>
+            </View>
           </View>
         </View>
       </View>

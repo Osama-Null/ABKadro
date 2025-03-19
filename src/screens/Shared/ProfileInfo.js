@@ -1,16 +1,22 @@
 import React, { useContext } from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { positionMap, departmentMap } from "../../constants/enums";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { AuthContext } from "../../context/AuthContext";
+import { deleteToken } from "../../api/storage";
 
 const ProfileInfo = ({ route }) => {
-  const { logout } = useContext(AuthContext);
   const navigation = useNavigation();
-  const { employee } = route.params;
+  const MyProfile = route.params;
+  console.log("See me", MyProfile);
+
+  const handleLogout = async () => {
+    await deleteToken();
+    setIsAuth(false);
+  };
 
   return (
     <View style={styles.container}>
@@ -34,7 +40,7 @@ const ProfileInfo = ({ route }) => {
             bottom: 0,
             right: 20,
           }}
-          onPress={logout}
+          onPress={handleLogout}
         >
           <MaterialIcons name="logout" size={30} color="red" />
         </TouchableOpacity>
@@ -49,13 +55,26 @@ const ProfileInfo = ({ route }) => {
         >
           <Ionicons name="arrow-back" size={30} color="white" />
         </TouchableOpacity>
-        <Image
-          source={{ uri: employee.empImage }}
-          style={styles.profileImage}
-        />
-        <Text style={styles.name}>{employee.empName}</Text>
-        <Text style={styles.position}>{employee.empPosition}</Text>
-        <Text style={styles.department}>{employee.empDepartment}</Text>
+        {MyProfile.profilePicture ? (
+          <Image
+            source={{ uri: MyProfile.profilePicture }}
+            style={styles.profileImage}
+          />
+        ) : (
+          <Image
+            source={require("../../../assets/profile.png")}
+            style={styles.profileImage}
+          />
+        )}
+        <Text style={styles.name}>
+          {MyProfile.firstName} {MyProfile.lastName}
+        </Text>
+        <Text style={styles.position}>
+          {positionMap[MyProfile?.position] || "Unknown Position"}
+        </Text>
+        <Text style={styles.department}>
+          {departmentMap[MyProfile?.department] || "Unknown Department"}
+        </Text>
       </View>
 
       <View style={styles.container}>
@@ -68,13 +87,25 @@ const ProfileInfo = ({ route }) => {
         >
           <View>
             <MaterialIcons name="email" size={20} style={styles.icon} />
-            <FontAwesome name="phone" size={20} style={styles.icon} />
-            <AntDesign name="star" size={20} style={styles.icon} />
+            {MyProfile?.role === "Employee" && (
+              <>
+                <MaterialIcons
+                  name="event-available"
+                  size={20}
+                  style={styles.icon}
+                />
+                <MaterialIcons name="sick" size={20} style={styles.icon} />
+              </>
+            )}
           </View>
           <View>
-            <Text style={styles.txt}> {employee.empEmail}</Text>
-            <Text style={styles.txt}> {employee.empPhone}</Text>
-            <Text style={styles.txt}> {employee.empRating}/5</Text>
+            <Text style={styles.txt}>{MyProfile.email}</Text>
+            {MyProfile?.role === "Employee" && (
+              <>
+                <Text style={styles.txt}>{MyProfile?.vacationDays}</Text>
+                <Text style={styles.txt}>{MyProfile?.sickDays}</Text>
+              </>
+            )}
           </View>
         </View>
       </View>
@@ -115,7 +146,7 @@ const styles = StyleSheet.create({
   txt: {
     fontSize: 15,
     color: "white",
-    marginBottom: 20,
+    marginBottom: 25,
   },
   icon: {
     color: "gold",
