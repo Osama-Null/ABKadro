@@ -34,7 +34,7 @@ const typeOfRequestMap = {
   1: "Complaint",
 };
 
-// Enum mappings for Status (Vacation requests)
+// Enum mappings for Status (Vacation requests) which is received as requestStatus = vacationStatus
 const vacationStatusMap = {
   0: "Ongoing",
   1: "RequestingDocuments",

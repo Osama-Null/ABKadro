@@ -12,8 +12,8 @@ import { BlurView } from "expo-blur";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Calendar } from "react-native-calendars";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
-import { useNavigation } from "@react-navigation/native";
-import { useMutation } from "@tanstack/react-query";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as DocumentPicker from "expo-document-picker";
 import { typeOfVacationMap, complaintTypeMap } from "../../constants/enums";
 import {
@@ -23,16 +23,10 @@ import {
 import Entypo from "@expo/vector-icons/Entypo";
 
 const Services = () => {
-  const pickFile = async () => {
-    console.log("Picking file...");
-    const result = await DocumentPicker.getDocumentAsync({ type: "*/*" });
-    console.log("Result:", result);
-  };
-
   const navigation = useNavigation();
+  const queryClient = useQueryClient();
 
   // State management
-  const [requestType, setRequestType] = useState("");
   const [formData, setFormData] = useState({
     startDate: "",
     endDate: "",
@@ -41,6 +35,25 @@ const Services = () => {
     description: "",
     files: [],
   });
+  const [requestType, setRequestType] = useState("");
+
+  // Reset form data when screen is focused
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => {
+        setFormData({
+          startDate: "",
+          endDate: "",
+          typeOfVacation: "",
+          typeOfComplaint: "",
+          description: "",
+          files: [],
+        });
+        setRequestType(""); // If you have a requestType state, reset it too
+      };
+    }, [])
+  );
+
   const [showRequestDropdown, setShowRequestDropdown] = useState(false);
   const [showVacationDropdown, setShowVacationDropdown] = useState(false);
   const [showComplaintDropdown, setShowComplaintDropdown] = useState(false);
@@ -64,6 +77,7 @@ const Services = () => {
       ),
     onSuccess: (data) => {
       console.log("Leave request submitted successfully:", data);
+      queryClient.invalidateQueries({ queryKey: ["fetchMyRequests"] });
       navigation.goBack();
     },
     onError: (error) => {
@@ -80,6 +94,7 @@ const Services = () => {
       createComplaintRequest(typeOfComplaint, descriptionBody, files),
     onSuccess: (data) => {
       console.log("Complaint request submitted successfully:", data);
+      queryClient.invalidateQueries({ queryKey: ["fetchMyRequests"] });
       navigation.goBack();
     },
     onError: (error) => {
@@ -208,6 +223,10 @@ const Services = () => {
         );
         return;
       }
+      if (formData.files.length === 0) {
+        alert("Please attach at least one file for the leave request.");
+        return;
+      }
       const typeOfVacationIndex = Object.entries(typeOfVacationMap).find(
         ([key, value]) => value === formData.typeOfVacation
       )[0];
@@ -221,6 +240,10 @@ const Services = () => {
     } else if (requestType === "Complaint") {
       if (!formData.typeOfComplaint) {
         alert("Please select a Type of Complaint");
+        return;
+      }
+      if (formData.files.length === 0) {
+        alert("Please attach at least one file for the complaint.");
         return;
       }
       complaintMutation.mutate({
@@ -240,9 +263,6 @@ const Services = () => {
       <ScrollView style={styles.formContainer}>
         {/* Request Type Dropdown */}
         <View style={styles.fieldContainer}>
-          <TouchableOpacity onPress={pickFile}>
-            <Text>Pick a File</Text>
-          </TouchableOpacity>
           <Text style={styles.label}>Request Type</Text>
           <BlurView intensity={50} style={styles.dropdownContainer}>
             <TouchableOpacity
@@ -328,7 +348,7 @@ const Services = () => {
                   <MaterialCommunityIcons
                     name="calendar"
                     size={24}
-                    color="white"
+                    color="gold"
                   />
                 </TouchableOpacity>
               </BlurView>
@@ -396,7 +416,7 @@ const Services = () => {
         <View style={styles.fieldContainer}>
           <Text style={styles.label}>Description</Text>
           <TextInput
-            style={[styles.input, { height: 100 }]}
+            style={[styles.input]}
             placeholder="Optional description"
             value={formData.description}
             onChangeText={(text) => handleInputChange("description", text)}
@@ -406,7 +426,16 @@ const Services = () => {
 
         {/* JSX for file upload */}
         <View style={styles.fieldContainer}>
-          <Text style={styles.label}>Attach Files</Text>
+          {requestType === "Leave" && (
+            <Text style={styles.label}>
+              Attach Files (e.g., Leave Form, Medical Certificate)*
+            </Text>
+          )}
+          {requestType === "Complaint" && (
+            <Text style={styles.label}>
+              Attach Files (e.g., Complaint Form, Supporting Documents)*
+            </Text>
+          )}
           <BlurView intensity={50} style={styles.fileUploadContainer}>
             <TouchableOpacity
               style={styles.fileUpload}

@@ -51,7 +51,7 @@ const EmployeeMyRequestItem = ({ request }) => {
             <MaterialCommunityIcons
               name="note-alert"
               size={30}
-              color="#FF3B30"
+              color="orange"
             />
           )}
         </View>
@@ -64,7 +64,7 @@ const EmployeeMyRequestItem = ({ request }) => {
               fontWeight: "bold",
             }}
           >
-            {requestType} - {subType}
+            {requestType}
           </Text>
           {request.typeOfRequest === 0 && (
             <View

@@ -58,25 +58,64 @@ const createComplaintRequest = async (
   return response.data; // Returns { RequestId: int }
 };
 
+// const addMessageToRequest = async (
+//   requestId,
+//   descriptionBody = "",
+//   files = []
+// ) => {
+//   const formData = new FormData();
+//   formData.append("RequestId", requestId); // Integer ID of the request
+//   if (descriptionBody) {
+//     formData.append("DescriptionBody", descriptionBody); // Optional message body
+//   }
+//   files.forEach((file) => {
+//     formData.append("Files", file); // Optional array of files
+//   });
+//   const response = await instance.post("/requests/add-message", formData, {
+//     headers: {
+//       "Content-Type": "multipart/form-data",
+//     },
+//   });
+//   return response.data; // Returns {}
+// };
+
 const addMessageToRequest = async (
   requestId,
   descriptionBody = "",
   files = []
 ) => {
   const formData = new FormData();
-  formData.append("RequestId", requestId); // Integer ID of the request
+  formData.append("RequestId", requestId.toString());
   if (descriptionBody) {
-    formData.append("DescriptionBody", descriptionBody); // Optional message body
+    formData.append("DescriptionBody", descriptionBody);
   }
-  files.forEach((file) => {
-    formData.append("Files", file); // Optional array of files
+  files.forEach((file, index) => {
+    formData.append(`Files[${index}]`, {
+      uri: file.uri,
+      name: file.name,
+      type: file.type,
+    });
   });
-  const response = await instance.post("/requests/add-message", formData, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
-  return response.data; // Returns {}
+
+  // Log the payload
+  console.log("Sending FormData:");
+  console.log("RequestId:", requestId.toString());
+  console.log("DescriptionBody:", descriptionBody || "Not provided");
+  console.log("Files:", files.length > 0 ? files : "No files");
+
+  try {
+    const response = await instance.post("/requests/add-message", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  } catch (error) {
+    // Log detailed error info
+    console.error("Error details:", error);
+    if (error.response) {
+      console.error("Server response:", error.response.data);
+    }
+    throw error;
+  }
 };
 
 export {

@@ -48,15 +48,18 @@ const EmployeeMyRequestList = () => {
 
   // Filter requests based on the specified conditions
   const filteredRequests = data?.filter((request) => {
-    // Define status condition based on request type
-    const statusCondition =
-      request.typeOfRequest === 0
-        ? [0, 1].includes(request.requestStatus) // Ongoing or RequestingDocuments for Leave
-        : request.typeOfRequest === 1
-        ? [0, 1].includes(request.requestStatus) // Ongoing or ReturnedForResponse for Complaint
-        : false;
+    let statusCondition = false;
 
-    // Apply filter
+    // Vacation requests: check requestStatus
+    if (request.typeOfRequest === 0) {
+      statusCondition = [0, 1].includes(request.requestStatus);
+    }
+    // Complaint requests: check complaintStatus
+    else if (request.typeOfRequest === 1) {
+      statusCondition = [0, 1].includes(request.complaintStatus);
+    }
+
+    // Apply filter based on filterType
     if (filterType === "all") {
       return statusCondition;
     } else if (filterType === "leave") {
@@ -131,10 +134,14 @@ const EmployeeMyRequestList = () => {
                   justifyContent: "center",
                   alignItems: "center",
                   gap: 20,
-                  marginTop:20
+                  marginTop: 20,
                 }}
               >
-                <Text style={{ color: "red", fontSize:20, fontWeight:"bold" }}>{noRequestsMessage}</Text>
+                <Text
+                  style={{ color: "red", fontSize: 20, fontWeight: "bold" }}
+                >
+                  {noRequestsMessage}
+                </Text>
                 <LottieView
                   source={require("../../../assets/Animation_Ghost.json")}
                   autoPlay
@@ -218,7 +225,7 @@ const EmployeeMyRequestList = () => {
                 setFilterModalVisible(false);
               }}
             >
-              <Ionicons name="alert-circle-outline" size={24} color="#FF3B30" />
+              <Ionicons name="alert-circle-outline" size={24} color="gold" />
               <Text style={styles.filterText}>Complaint</Text>
             </TouchableOpacity>
           </View>
@@ -241,7 +248,7 @@ const EmployeeMyRequestList = () => {
             style={{
               flex: 1,
               width: "100%",
-              flexDirection: "row",
+              flexDirection: "column",
               padding: 10,
             }}
           >
@@ -259,12 +266,13 @@ export default EmployeeMyRequestList;
 const styles = StyleSheet.create({
   /* Modal Styling */
   modalOverlay: {
+    backgroundColor: "rgba(255, 255, 255, 0.26)",
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
   modalContent: {
-    backgroundColor: "rgba(255, 255, 255, 0.2)",
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
     width: "80%",
     borderRadius: 15,
     padding: 20,
@@ -281,7 +289,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 10,
     borderBottomWidth: 1,
-    borderColor: "#ddd",
+    borderColor: "white",
     width: "100%",
   },
   filterText: {

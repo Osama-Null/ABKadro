@@ -6,11 +6,7 @@ import {
   View,
   Image,
 } from "react-native";
-import React, { useContext } from "react";
-import employees from "../../data/employees";
-import requests from "../../data/requests";
-import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
-import Ionicons from "@expo/vector-icons/Ionicons";
+import React from "react";
 import { BlurView } from "expo-blur";
 import { PieChart } from "react-native-gifted-charts";
 import HRRequestList from "../../components/HR/HRRequestList";
@@ -18,71 +14,102 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import Octicons from "@expo/vector-icons/Octicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
+import { useQuery } from "@tanstack/react-query";
+import { getMyProfile } from "../../api/shared";
+import { getAllRequests } from "../../api/admins";
+import {
+  positionMap,
+  typeOfRequestMap,
+  vacationStatusMap,
+  complaintStatusMap,
+  typeOfVacationMap,
+  complaintTypeMap,
+} from "../../constants/enums";
 
 const HRHome = () => {
   const navigation = useNavigation();
-  // Mapping
-  const Employees = employees.map((employee) => ({
-    empId: employee.id,
-    empName: employee.name,
-    empImage: employee.image,
-    empRating: employee.rating,
-    empDepartment: employee.department,
-    empHireDate: employee.hireDate,
-    empEmail: employee.contactInfo.email,
-    empPhone: employee.contactInfo.phone,
-    empPosition: employee.position,
-    empDescription: employee.description,
-    empStatus: employee.status,
-    empSkills: employee.skills.map((skill) => ({
-      skillId: skill.id,
-      skillName: skill.name,
-      skillProficiency: skill.proficiency,
-      skillYearsExperience: skill.yearsExperience,
-    })),
-    empHrSpecific: employee.hrSpecific
-      ? {
-          certifications: employee.hrSpecific.certifications,
-          yearsInHR: employee.hrSpecific.yearsInHR,
-          specialties: employee.hrSpecific.specialties,
-        }
-      : null,
-  }));
 
-  const Requests = requests.map((request) => ({
-    reqId: request.id,
-    reqEmployeeId: request.employeeId,
-    reqHrReviewerId: request.hrReviewerId,
-    reqType: request.type,
-    reqStatus: request.status,
-    reqSubmittedDate: request.submittedDate,
-    reqReviewedDate: request.reviewedDate,
-    reqDetails: request.details,
-    reqComments: request.comments,
-  }));
+  // Fetch data
+  const profileQuery = useQuery({
+    queryKey: ["fetchMyProfile"],
+    queryFn: () => getMyProfile(),
+  });
+  const requestsQuery = useQuery({
+    queryKey: ["fetchAllRequests"],
+    queryFn: () => getAllRequests(),
+  });
+
+  // Handle loading and error states
+  if (profileQuery.isLoading || requestsQuery.isLoading) {
+    return <Text style={styles.loadingText}>Loading...</Text>;
+  }
+  if (profileQuery.isError || requestsQuery.isError) {
+    console.log("Error fetching profile: ", profileQuery.error);
+    console.log("Error fetching requests: ", requestsQuery.error);
+    return <Text style={styles.errorText}>Error fetching data</Text>;
+  }
+
+  // Mapping Profile
+  const MyProfile = profileQuery.data;
+  const position = positionMap[MyProfile.position] || "Unknown";
+
+  // Mapping Requests
+  const Requests = requestsQuery.data.map((request) => {
+    const typeOfRequest = typeOfRequestMap[request.typeOfRequest] || "Unknown";
+    let status;
+    if (request.typeOfRequest === 0) {
+      status = vacationStatusMap[request.requestStatus] || "Unknown";
+    } else if (request.typeOfRequest === 1) {
+      status = complaintStatusMap[request.complaintStatus] || "Unknown";
+    }
+    const typeOfVacation =
+      request.typeOfRequest === 0
+        ? typeOfVacationMap[request.typeOfVacation] || "Unknown"
+        : null;
+    const typeOfComplaint =
+      request.typeOfRequest === 1
+        ? complaintTypeMap[request.typeOfComplaint] || "Unknown"
+        : null;
+
+    return {
+      reqId: request.requestId,
+      reqEmployeeId: request.employeeId,
+      reqType: typeOfRequest,
+      reqStatus: status,
+      reqSubmittedDate: request.createdAt,
+      reqDetails: request.messages,
+      reqTypeOfVacation: typeOfVacation,
+      reqTypeOfComplaint: typeOfComplaint,
+    };
+  });
 
   // Calculate totals
   const totalPending = Requests.filter(
-    (req) => req.reqStatus === "Pending"
+    (req) =>
+      req.reqStatus === "Ongoing" ||
+      req.reqStatus === "RequestingDocuments" ||
+      req.reqStatus === "ReturedForResponse"
   ).length;
 
-  const totalLeave = Requests.filter((req) => req.reqType === "Leave").length;
+  const totalLeave = Requests.filter(
+    (req) => req.reqType === "Vacation"
+  ).length;
 
   const totalComplaints = Requests.filter(
     (req) => req.reqType === "Complaint"
   ).length;
 
   const totalRejected = Requests.filter(
-    (req) => req.reqStatus === "Rejected"
+    (req) => req.reqStatus === "Rejected" || req.reqStatus === "Resolved"
   ).length;
 
   const totalAccepted = Requests.filter(
     (req) => req.reqStatus === "Approved"
   ).length;
 
-  const data = [
-    { value: totalAccepted, text: "Approved", color: "#03fcc6" }, // Blue
-    { value: totalRejected, text: "Rejected", color: "#FC036F" }, // Red
+  const pieData = [
+    { value: totalAccepted, text: "Approved", color: "#03fcc6" },
+    { value: totalRejected, text: "Rejected", color: "#FC036F" },
   ];
 
   return (
@@ -90,7 +117,6 @@ const HRHome = () => {
       <ScrollView>
         {/* Header */}
         <View
-          flex={1}
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
@@ -98,21 +124,12 @@ const HRHome = () => {
             marginBottom: "5%",
           }}
         >
-          <View
-            style={{
-              justifyContent: "center",
-            }}
-          >
-            <Text
-              style={{
-                color: "white",
-              }}
-            >
-              Welcome, {Employees[0].empName}
+          <View style={{ justifyContent: "center" }}>
+            <Text style={{ color: "white" }}>
+              Welcome, {MyProfile.firstName} {MyProfile.lastName}
             </Text>
             <Text style={styles.header}>Dashboard</Text>
           </View>
-          {/* img */}
           <TouchableOpacity
             style={{
               backgroundColor: "gold",
@@ -121,22 +138,23 @@ const HRHome = () => {
               width: 50,
               height: 50,
             }}
-            onPress={() =>
-              navigation.navigate("HRProfileInfo", { employee: Employees[0] })
-            }
+            onPress={() => navigation.navigate("HRProfileInfo", MyProfile)}
           >
-            <Image
-              source={{ uri: Employees[0].empImage }}
-              width={50}
-              height={50}
-            />
+            {MyProfile.profilePicture ? (
+              <Image
+                source={{ uri: MyProfile.profilePicture }}
+                style={{ width: 50, height: 50 }}
+              />
+            ) : (
+              <Text>No Image</Text>
+            )}
           </TouchableOpacity>
         </View>
+
         {/* Dashboard */}
-        <View flex={1}>
+        <View>
           <View
             style={{
-              flex: 1,
               width: "100%",
               height: 140,
               alignSelf: "center",
@@ -157,8 +175,14 @@ const HRHome = () => {
                 padding: 20,
               }}
             >
-              <View flex={1} width={"100%"}>
-                <View width={"100%"} height={"50%"} justifyContent={"center"}>
+              <View style={{ flex: 1, width: "100%" }}>
+                <View
+                  style={{
+                    width: "100%",
+                    height: "50%",
+                    justifyContent: "center",
+                  }}
+                >
                   <Text
                     style={{
                       color: "white",
@@ -167,15 +191,10 @@ const HRHome = () => {
                       fontWeight: "bold",
                     }}
                   >
-                    Total Requests: {totalPending}
+                    Total Pending Requests: {totalPending}
                   </Text>
                 </View>
-
                 <View
-                  flexDirection={"row"}
-                  paddingHorizontal={30}
-                  width={"100%"}
-                  height={"50%"}
                   style={{
                     flexDirection: "row",
                     paddingHorizontal: 20,
@@ -185,12 +204,7 @@ const HRHome = () => {
                     gap: 50,
                   }}
                 >
-                  <Text
-                    style={{
-                      color: "white",
-                      fontSize: 20,
-                    }}
-                  >
+                  <Text style={{ color: "white", fontSize: 20 }}>
                     <FontAwesome5
                       name="umbrella-beach"
                       size={20}
@@ -198,29 +212,24 @@ const HRHome = () => {
                     />{" "}
                     {totalLeave}
                   </Text>
-                  <Text
-                    style={{
-                      color: "white",
-                      fontSize: 20,
-                    }}
-                  >
+                  <Text style={{ color: "white", fontSize: 20 }}>
                     <Octicons name="report" size={20} color="orange" />{" "}
                     {totalComplaints}
                   </Text>
                 </View>
               </View>
               <View
-                flex={1}
                 style={{
+                  flex: 1,
                   alignItems: "center",
                   borderLeftWidth: 1,
                   borderLeftColor: "white",
                 }}
               >
                 <PieChart
-                  data={data}
-                  radius={60} // Outer radius of the donut
-                  donut={true} // Enables the donut chart
+                  data={pieData}
+                  radius={60}
+                  donut={true}
                   innerCircleColor="#384E67"
                   innerRadius={45}
                   centerLabelComponent={() => (
@@ -307,7 +316,7 @@ const HRHome = () => {
           </View>
         </View>
 
-        {/* Req */}
+        {/* Requests List */}
         <HRRequestList />
       </ScrollView>
     </View>
@@ -319,8 +328,6 @@ export default HRHome;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
     backgroundColor: "#001D3D",
     paddingTop: "1%",
     paddingHorizontal: 15,
@@ -329,5 +336,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "white",
     fontWeight: "bold",
+  },
+  loadingText: {
+    color: "white",
+    fontSize: 18,
+  },
+  errorText: {
+    color: "red",
+    fontSize: 18,
   },
 });
