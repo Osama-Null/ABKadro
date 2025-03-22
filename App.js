@@ -47,7 +47,11 @@ export default function App() {
       <QueryClientProvider client={queryClient}>
         <UserContext.Provider value={{ isAuth, setIsAuth, role, setRole }}>
           <SafeAreaProvider>
-            <SafeAreaView style={{ flex: 1, backgroundColor: "#071B3B" }}>
+            <SafeAreaView style={{ flex: 1, backgroundColor: "#001D3D" }}>
+              <StatusBar
+                style="light"
+                hidden={false} // Show or hide the status bar
+              />
               {isAuth ? (
                 role === "Admin" ? (
                   <HRNavigation />

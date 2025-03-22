@@ -58,12 +58,6 @@ const EmployeeHome = () => {
           >
             {/* img */}
             <TouchableOpacity
-              style={{
-                borderRadius: 100,
-                overflow: "hidden",
-                width: 50,
-                height: 50,
-              }}
               onPress={() =>
                 navigation.navigate("EmployeeProfileInfo", MyProfile)
               }
@@ -75,12 +69,12 @@ const EmployeeHome = () => {
               {MyProfile.profilePicture ? (
                 <Image
                   source={{ uri: MyProfile.profilePicture }}
-                  style={{ width: 50, height: 50 }}
+                  style={{ width: 40, height: 40, borderRadius: 100 }}
                 />
               ) : (
                 <Image
                   source={require("../../../assets/profile.png")}
-                  style={{ width: 50, height: 50 }}
+                  style={{ width: 40, height: 40, borderRadius: 100, top: 5 }}
                 />
               )}
             </TouchableOpacity>
@@ -116,7 +110,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#001D3D",
     padding: 20,
-    paddingTop: 40,
+    paddingTop: 10,
   },
   section: {
     flex: 1,

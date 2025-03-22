@@ -39,7 +39,7 @@ const HRHome = () => {
     queryFn: () => getAllRequests(),
   });
 
-  // Handle loading and error states
+  // Handle loading & error states
   if (profileQuery.isLoading || requestsQuery.isLoading) {
     return <Text style={styles.loadingText}>Loading...</Text>;
   }
@@ -49,67 +49,76 @@ const HRHome = () => {
     return <Text style={styles.errorText}>Error fetching data</Text>;
   }
 
-  // Mapping Profile
-  const MyProfile = profileQuery.data;
-  const position = positionMap[MyProfile.position] || "Unknown";
+  // Mapping
+  const myProfile = profileQuery.data;
+  const position = positionMap[myProfile.position] || "Unknown";
+  const requests = requestsQuery?.data;
+  console.log("status: ", requests.length, requests[0].typeOfRequest, requests[1].typeOfRequest);
 
-  // Mapping Requests
-  const Requests = requestsQuery.data.map((request) => {
-    const typeOfRequest = typeOfRequestMap[request.typeOfRequest] || "Unknown";
-    let status;
-    if (request.typeOfRequest === 0) {
-      status = vacationStatusMap[request.requestStatus] || "Unknown";
-    } else if (request.typeOfRequest === 1) {
-      status = complaintStatusMap[request.complaintStatus] || "Unknown";
-    }
-    const typeOfVacation =
-      request.typeOfRequest === 0
-        ? typeOfVacationMap[request.typeOfVacation] || "Unknown"
-        : null;
-    const typeOfComplaint =
-      request.typeOfRequest === 1
-        ? complaintTypeMap[request.typeOfComplaint] || "Unknown"
-        : null;
-
-    return {
-      reqId: request.requestId,
-      reqEmployeeId: request.employeeId,
-      reqType: typeOfRequest,
-      reqStatus: status,
-      reqSubmittedDate: request.createdAt,
-      reqDetails: request.messages,
-      reqTypeOfVacation: typeOfVacation,
-      reqTypeOfComplaint: typeOfComplaint,
-    };
-  });
+  // For debugging
+  console.log(
+    "\n==================================\nMpProfile: ",
+    myProfile,
+    "\n"
+  );
+  console.log(
+    "\n==================================\nrequestsQuery: ",
+    requestsQuery,
+    "\n"
+  );
+  console.log(
+    "\n==================================\nrequestsQuery.data: ",
+    requestsQuery.data,
+    "\n"
+  );
+  console.log(
+    "\n==================================\nPosition: ",
+    position,
+    "\n"
+  );
 
   // Calculate totals
-  const totalPending = Requests.filter(
-    (req) =>
-      req.reqStatus === "Ongoing" ||
-      req.reqStatus === "RequestingDocuments" ||
-      req.reqStatus === "ReturedForResponse"
+  const totalPending = requests.filter(
+    (req) => req.requestStatus === 0 || req.complaintStatus === 0
   ).length;
 
-  const totalLeave = Requests.filter(
-    (req) => req.reqType === "Vacation"
+  const totalLeave = requests.filter((req) => req.typeOfRequest === 0).length;
+
+  const totalComplaints = requests.filter(
+    (req) => req.typeOfRequest === 1
   ).length;
 
-  const totalComplaints = Requests.filter(
-    (req) => req.reqType === "Complaint"
+  const totalAccepted = requests.filter(
+    (req) => req.requestStatus === 2
   ).length;
 
-  const totalRejected = Requests.filter(
-    (req) => req.reqStatus === "Rejected" || req.reqStatus === "Resolved"
+  const totalRejected = requests.filter(
+    (req) => req.requestStatus === 3
   ).length;
 
-  const totalAccepted = Requests.filter(
-    (req) => req.reqStatus === "Approved"
+  const totalResolved = requests.filter(
+    (req) => req.complaintStatus === 2
   ).length;
 
-  const pieData = [
-    { value: totalAccepted, text: "Approved", color: "#03fcc6" },
-    { value: totalRejected, text: "Rejected", color: "#FC036F" },
+  const allZero =
+    totalAccepted === 0 && totalRejected === 0 && totalResolved === 0;
+
+  const data = [
+    {
+      value: allZero ? 1 : totalAccepted,
+      text: "Approved",
+      color: allZero ? "rgba(255, 255, 255, 0.23)" : "#03fcc6",
+    },
+    {
+      value: allZero ? 1 : totalRejected,
+      text: "Rejected",
+      color: allZero ? "rgba(255, 255, 255, 0.23)" : "#FC036F",
+    },
+    {
+      value: allZero ? 1 : totalResolved,
+      text: "Resolved",
+      color: allZero ? "rgba(255, 255, 255, 0.23)" : "#2196F3",
+    },
   ];
 
   return (
@@ -117,6 +126,7 @@ const HRHome = () => {
       <ScrollView>
         {/* Header */}
         <View
+          flex={1}
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
@@ -124,37 +134,40 @@ const HRHome = () => {
             marginBottom: "5%",
           }}
         >
-          <View style={{ justifyContent: "center" }}>
-            <Text style={{ color: "white" }}>
-              Welcome, {MyProfile.firstName} {MyProfile.lastName}
+          <View
+            style={{
+              justifyContent: "center",
+            }}
+          >
+            <Text
+              style={{
+                color: "white",
+                fontSize: 15,
+              }}
+            >
+              Welcome, {myProfile.firstName} {myProfile.lastName}
             </Text>
             <Text style={styles.header}>Dashboard</Text>
           </View>
+          {/* img */}
           <TouchableOpacity
-            style={{
-              backgroundColor: "gold",
-              borderRadius: 100,
-              overflow: "hidden",
-              width: 50,
-              height: 50,
-            }}
-            onPress={() => navigation.navigate("HRProfileInfo", MyProfile)}
+            onPress={() => navigation.navigate("HRProfileInfo", myProfile)}
           >
-            {MyProfile.profilePicture ? (
-              <Image
-                source={{ uri: MyProfile.profilePicture }}
-                style={{ width: 50, height: 50 }}
-              />
-            ) : (
-              <Text>No Image</Text>
-            )}
+            <Image
+              source={
+                myProfile.profilePicture
+                  ? { uri: myProfile.profilePicture }
+                  : require("../../../assets/profile.png")
+              }
+              style={styles.img}
+            />
           </TouchableOpacity>
         </View>
-
         {/* Dashboard */}
-        <View>
+        <View flex={1}>
           <View
             style={{
+              flex: 1,
               width: "100%",
               height: 140,
               alignSelf: "center",
@@ -175,11 +188,17 @@ const HRHome = () => {
                 padding: 20,
               }}
             >
-              <View style={{ flex: 1, width: "100%" }}>
+              <View
+                style={{
+                  flex: 1,
+                  width: "100%",
+                  paddingRight: 30,
+                  gap: 20,
+                }}
+              >
                 <View
                   style={{
                     width: "100%",
-                    height: "50%",
                     justifyContent: "center",
                   }}
                 >
@@ -191,45 +210,61 @@ const HRHome = () => {
                       fontWeight: "bold",
                     }}
                   >
-                    Total Pending Requests: {totalPending}
+                    Total Requests: {totalPending}
                   </Text>
                 </View>
+
                 <View
                   style={{
                     flexDirection: "row",
-                    paddingHorizontal: 20,
+                    paddingHorizontal: 30,
                     width: "100%",
-                    height: "50%",
                     justifyContent: "center",
                     gap: 50,
                   }}
                 >
-                  <Text style={{ color: "white", fontSize: 20 }}>
+                  <Text
+                    style={{
+                      color: "white",
+                      fontSize: 20,
+                    }}
+                  >
                     <FontAwesome5
                       name="umbrella-beach"
                       size={20}
-                      color="orange"
-                    />{" "}
+                      color={"orange"}
+                    />
+
                     {totalLeave}
                   </Text>
-                  <Text style={{ color: "white", fontSize: 20 }}>
-                    <Octicons name="report" size={20} color="orange" />{" "}
+                  <Text
+                    style={{
+                      color: "white",
+                      fontSize: 20,
+                    }}
+                  >
+                    <Octicons
+                      name="report"
+                      size={20}
+                      color={"orange"}
+                    />{" "}
                     {totalComplaints}
                   </Text>
                 </View>
               </View>
               <View
+                flex={1}
                 style={{
-                  flex: 1,
                   alignItems: "center",
                   borderLeftWidth: 1,
                   borderLeftColor: "white",
+                  paddingLeft: 20,
                 }}
               >
                 <PieChart
-                  data={pieData}
-                  radius={60}
-                  donut={true}
+                  data={data}
+                  radius={60} // Outer radius of the donut
+                  donut={true} // Enables the donut chart
                   innerCircleColor="#384E67"
                   innerRadius={45}
                   centerLabelComponent={() => (
@@ -247,12 +282,13 @@ const HRHome = () => {
                         style={{
                           justifyContent: "center",
                           alignItems: "center",
-                          gap: 7,
+                          gap: 6,
                           marginRight: 2,
                         }}
                       >
                         <FontAwesome name="circle" size={9} color="#03fcc6" />
                         <FontAwesome name="circle" size={9} color="#FC036F" />
+                        <FontAwesome name="circle" size={9} color="#2196F3" />
                       </View>
                       <View
                         style={{
@@ -279,6 +315,15 @@ const HRHome = () => {
                           }}
                         >
                           Rejected:
+                        </Text>
+                        <Text
+                          style={{
+                            color: "white",
+                            fontSize: 11,
+                            fontWeight: "bold",
+                          }}
+                        >
+                          Resolved:
                         </Text>
                       </View>
                       <View
@@ -307,6 +352,15 @@ const HRHome = () => {
                         >
                           {totalRejected}
                         </Text>
+                        <Text
+                          style={{
+                            color: "white",
+                            fontSize: 11,
+                            fontWeight: "bold",
+                          }}
+                        >
+                          {totalResolved}
+                        </Text>
                       </View>
                     </View>
                   )}
@@ -315,8 +369,7 @@ const HRHome = () => {
             </BlurView>
           </View>
         </View>
-
-        {/* Requests List */}
+        {/* Req */}
         <HRRequestList />
       </ScrollView>
     </View>
@@ -328,8 +381,10 @@ export default HRHome;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "#001D3D",
-    paddingTop: "1%",
+    paddingTop: "2%",
     paddingHorizontal: 15,
   },
   header: {
@@ -337,12 +392,9 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
-  loadingText: {
-    color: "white",
-    fontSize: 18,
-  },
-  errorText: {
-    color: "red",
-    fontSize: 18,
+  img: {
+    height: 40,
+    width: 40,
+    borderRadius: 100,
   },
 });

@@ -4,102 +4,48 @@ import employees from "../../data/employees";
 import HREmployeeItem from "./HREmployeeItem";
 import { getEmployees } from "../../api/employees";
 import { useQuery } from "@tanstack/react-query";
+import { getAllEmployees } from "../../api/admins";
 
-const HREmployeeList = ({ search, employees }) => {
-  // Filter employees based on search input using FirstName and LastName
-  const filteredEmployees =
-    employees
-      ?.filter((employee) => {
-        const fullName = `${employee.FirstName} ${
-          employee.LastName || ""
-        }`.toLowerCase();
-        return fullName.includes(search.toLowerCase());
-      })
-      .map((employee) => (
-        <HREmployeeItem key={employee.Id} employee={employee} />
-      )) || [];
+const HREmployeeList = ({ search }) => {
+  // Fetch data
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["fetchAllEmployees"],
+    queryFn: () => getAllEmployees(),
+  });
+
+  // Handle loading & error states
+  if (isLoading) {
+    return <Text style={{}}>Loading...</Text>;
+  }
+  if (isError) {
+    return (
+      <Text
+        style={{
+          color: "red",
+          marginTop: 5,
+        }}
+      >
+        Error fetching data
+      </Text>
+    );
+  }
+
+  // Mapping to HREmployeeItem components
+  const employees = data?.map((employee) => (
+    <HREmployeeItem key={employee.id} employee={employee} />
+  ));
+  console.log(
+    "\n==================================\nFetched All Employees From List: ",
+    employees,
+    "\n"
+  );
 
   return (
     <View style={styles.container}>
-      {filteredEmployees.length > 0 ? (
-        <ScrollView>{filteredEmployees}</ScrollView>
-      ) : (
-        <Text style={styles.noEmployees}>No employees found.</Text>
-      )}
+      <ScrollView>{employees}</ScrollView>
     </View>
   );
 };
-// // API
-//  const { data, isLoading, isError } = useQuery({
-//    queryKey: ["fetchAllEmployees"],
-//    queryFn: () => getAllEmployees(),
-//  });
-// const EmployeesAPI = data
-//   ?.filter((employee) => {
-//     return employee.name.toLowerCase().includes(search.toLowerCase());
-//   })
-//   .map((employee) => {
-//     return <HREmployeeItem key={employee.id} employee={employee} />;
-//   });
-
-// if (EmployeesAPI == null) {
-//   console.log("All Fetched Employees 👨‍💼", data);
-// } else console.log("❌☹️ No Employees ☹️❌\n", isError);
-// //==========================================================
-// // Filter employees based on search input
-// const filteredEmployees = employees.filter((emp) =>
-//   emp.name.toLowerCase().includes(search.toLowerCase())
-// );
-// //==========================================================
-// // Map filtered employees to HREmployeeItem components
-// const Employees = filteredEmployees.map((employee) => (
-//   <HREmployeeItem key={employee.id} employee={employee} />
-// ));
-
-// Filter employees based on search input using FirstName and LastName
-//   const filteredEmployees =
-//     data
-//       ?.filter((employee) => {
-//         const fullName = `${employee.FirstName} ${
-//           employee.LastName || ""
-//         }`.toLowerCase();
-//         return fullName.includes(search.toLowerCase());
-//       })
-//       .map((employee) => (
-//         <HREmployeeItem key={employee.Id} employee={employee} />
-//       )) || [];
-
-//   // Handle loading and error states
-//   if (isLoading) {
-//     return (
-//       <View style={styles.container}>
-//         <Text style={styles.loading}>Loading employees...</Text>
-//       </View>
-//     );
-//   }
-//   if (isError) {
-//     return (
-//       <View style={styles.container}>
-//         <Text style={styles.error}>
-//           Error loading employees. Please try again.
-//         </Text>
-//       </View>
-//     );
-//   }
-
-//   return (
-//     <View style={styles.container}>
-//       {/* <Text style={{ color: "white" }}>{Employees[0].name}</Text>
-//       <ScrollView>{Employees}</ScrollView> */}
-
-//       {filteredEmployees.length > 0 ? (
-//         <ScrollView>{filteredEmployees}</ScrollView>
-//       ) : (
-//         <Text style={styles.noEmployees}>No employees found.</Text>
-//       )}
-//     </View>
-//   );
-// };
 
 const styles = StyleSheet.create({
   container: {

@@ -5,40 +5,41 @@ import { BlurView } from "expo-blur";
 import { PieChart } from "react-native-gifted-charts";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useQuery } from "@tanstack/react-query";
-import { getEmployees } from "../../api/admins";
+import { getAllEmployees } from "../../api/admins";
 
 const HRAllEmployee = () => {
   const [search, setSearch] = useState("");
 
-  // Fetch all employees from the API
-  const {
-    data: employees,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["getEmployees"],
-    queryFn: getEmployees,
+  // Fetch data
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["fetchAllEmployees"],
+    queryFn: () => getAllEmployees(),
   });
 
+  // Handle loading & error states
   if (isLoading) {
+    return <Text style={{}}>Loading...</Text>;
+  }
+  if (isError) {
     return (
-      <View style={styles.container}>
-        <Text style={{ color: "white", textAlign: "center", marginTop: 20 }}>
-          Loading...
-        </Text>
-      </View>
+      <Text
+        style={{
+          color: "red",
+          marginTop: 5,
+        }}
+      >
+        Error fetching data
+      </Text>
     );
   }
 
-  if (error) {
-    return (
-      <View style={styles.container}>
-        <Text style={{ color: "red", textAlign: "center", marginTop: 20 }}>
-          Error: {error.message}
-        </Text>
-      </View>
-    );
-  }
+  // Mapping
+  const employees = data;
+  console.log(
+    "\n==================================\nFetched All Employees",
+    employees,
+    "\n"
+  );
 
   // Calculate employee statistics
   const activeEmployees = employees.filter(
@@ -49,10 +50,20 @@ const HRAllEmployee = () => {
   ).length;
   const totalEmployees = employees.length;
 
+  const allZero = activeEmployees === 0 && inactiveEmployees === 0;
+
   // Data for the pie chart
-  const data = [
-    { value: activeEmployees, text: "Active", color: "#03fcc6" }, // Green for active
-    { value: inactiveEmployees, text: "Inactive", color: "#FC036F" }, // Red for inactive
+  const donutData = [
+    {
+      value: allZero ? 1 : activeEmployees,
+      text: "Active",
+      color: allZero ? "rgba(255, 255, 255, 0.23)" : "#03fcc6",
+    }, // Green for active
+    {
+      value: allZero ? 1 : inactiveEmployees,
+      text: "Inactive",
+      color: allZero ? "rgba(255, 255, 255, 0.23)" : "#FC036F",
+    }, // Red for inactive
   ];
 
   return (
@@ -81,7 +92,7 @@ const HRAllEmployee = () => {
             }}
           >
             <PieChart
-              data={data}
+              data={donutData}
               radius={90} // Outer radius of the donut
               donut={true} // Enables the donut chart
               innerCircleColor="#384E67"

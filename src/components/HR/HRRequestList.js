@@ -1,43 +1,60 @@
 import { StyleSheet, Text, View, ScrollView } from "react-native";
 import React, { useContext } from "react";
-import employees from "../../data/employees";
 import requests from "../../data/requests";
 import { BlurView } from "expo-blur";
 import HRRequestItem from "./HRRequestItem";
+import { getAllEmployees } from "../../api/admins";
+import { useQuery } from "@tanstack/react-query";
 
 const HRRequestList = () => {
-  const Employees = employees.map((employee) => ({
-    empId: employee.id,
-    empName: employee.name,
-    empImage: employee.image,
-    empDepartment: employee.department,
-    empPosition: employee.position,
-  }));
+  // API
+  const employeesQuery = useQuery({
+    queryKey: ["fetchAllEmployees"],
+    queryFn: () => getAllEmployees(),
+  });
 
-  const Requests = requests
-    .filter((request) => request.status === "Pending")
-    .sort((a, b) => new Date(b.submittedDate) - new Date(a.submittedDate))
+  const requestsQuery = useQuery({
+    queryKey: ["fetchAllRequests"],
+    queryFn: () => getAllRequests(),
+  });
+
+  // Handle loading & error states
+  if (requestsQuery.isLoading || employeesQuery.isLoading) {
+    return <Text style={styles.loadingText}>Loading...</Text>;
+  }
+  if (requestsQuery.isError || employeesQuery.isError) {
+    console.log("Error fetching profile: ", profileQuery.error);
+    console.log("Error fetching requests: ", requestsQuery.error);
+    return <Text style={styles.errorText}>Error fetching data</Text>;
+  }
+
+  // For debugging
+  console.log(
+    "\n==================================\nemployeesQuery.data: ",
+    employeesQuery.data,
+    "\n"
+  );
+  console.log(
+    "\n==================================\nrequestsQuery.data: ",
+    requestsQuery.data,
+    "\n"
+  );
+
+  // Mapping
+  const employees = employeesQuery?.data;
+  const requests = requestsQuery?.data
+    .filter(
+      (request) => request.requestStatus === 0 || request.complaintStatus === 0
+    )
     .map((request) => {
-      const employee = Employees.find(
-        (emp) => emp.empId === request.employeeId
+      const employee = employees.find(
+        (employee) => employee.id === request.employeeId
       );
       return (
         <HRRequestItem
-          key={request.id}
-          reqId={request.id}
-          reqEmployeeId={request.employeeId}
-          reqHrReviewerId={request.hrReviewerId}
-          reqType={request.type}
-          reqStatus={request.status}
-          reqSubmittedDate={request.submittedDate}
-          reqReviewedDate={request.reviewedDate}
-          reqDetails={request.details}
-          reqComments={request.comments}
-          //-------------------------------------------
-          empName={employee ? employee.empName : "Unknown"}
-          empImage={employee ? employee.empImage : "default_image_url"}
-          empDepartment={employee ? employee.empDepartment : "N/A"}
-          empPosition={employee ? employee.empPosition : "N/A"}
+          key={request.requestId}
+          request={request}
+          employee={employee}
         />
       );
     });
@@ -63,7 +80,7 @@ const HRRequestList = () => {
             padding: 15,
           }}
         >
-          <ScrollView style={{ flex: 1 }}>{Requests}</ScrollView>
+          <ScrollView style={{ flex: 1 }}>{requests}</ScrollView>
         </BlurView>
       </View>
     </View>

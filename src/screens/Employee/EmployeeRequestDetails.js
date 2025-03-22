@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
   chatbox: {
     flex: 1,
     padding: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.63)",
+    backgroundColor: "rgb(255, 255, 255)",
     borderRadius: 10,
   },
   dateSeparator: {

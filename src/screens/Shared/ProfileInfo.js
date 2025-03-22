@@ -10,8 +10,8 @@ import { deleteToken } from "../../api/storage";
 
 const ProfileInfo = ({ route }) => {
   const navigation = useNavigation();
-  const MyProfile = route.params;
-  console.log("See me", MyProfile);
+  const myProfile = route.params;
+  console.log("See me👀: ", myProfile);
 
   const handleLogout = async () => {
     await deleteToken();
@@ -55,25 +55,28 @@ const ProfileInfo = ({ route }) => {
         >
           <Ionicons name="arrow-back" size={30} color="white" />
         </TouchableOpacity>
-        {MyProfile.profilePicture ? (
-          <Image
-            source={{ uri: MyProfile.profilePicture }}
-            style={styles.profileImage}
-          />
-        ) : (
-          <Image
-            source={require("../../../assets/profile.png")}
-            style={styles.profileImage}
-          />
-        )}
+
+        <Image
+          source={
+            myProfile.profilePicture
+              ? { uri: myProfile.profilePicture }
+              : require("../../../assets/profile.png")
+          }
+          style={styles.profileImage}
+        />
+
         <Text style={styles.name}>
-          {MyProfile.firstName} {MyProfile.lastName}
+          {myProfile.firstName} {myProfile.lastName}
         </Text>
         <Text style={styles.position}>
-          {positionMap[MyProfile?.position] || "Unknown Position"}
+          {positionMap[myProfile?.position] || "Unknown Position"}
         </Text>
         <Text style={styles.department}>
-          {departmentMap[MyProfile?.department] || "Unknown Department"}
+          {myProfile.role === "Admin"
+            ? "Administrator"
+            : myProfile.role === "Employee" && myProfile.department != null
+            ? departmentMap[myProfile?.department]
+            : "Unknown Department"}
         </Text>
       </View>
 
@@ -87,7 +90,7 @@ const ProfileInfo = ({ route }) => {
         >
           <View>
             <MaterialIcons name="email" size={20} style={styles.icon} />
-            {MyProfile?.role === "Employee" && (
+            {myProfile?.role === "Employee" && (
               <>
                 <MaterialIcons
                   name="event-available"
@@ -99,11 +102,11 @@ const ProfileInfo = ({ route }) => {
             )}
           </View>
           <View>
-            <Text style={styles.txt}>{MyProfile.email}</Text>
-            {MyProfile?.role === "Employee" && (
+            <Text style={styles.txt}>{myProfile.email}</Text>
+            {myProfile?.role === "Employee" && (
               <>
-                <Text style={styles.txt}>{MyProfile?.vacationDays}</Text>
-                <Text style={styles.txt}>{MyProfile?.sickDays}</Text>
+                <Text style={styles.txt}>{myProfile?.vacationDays}</Text>
+                <Text style={styles.txt}>{myProfile?.sickDays}</Text>
               </>
             )}
           </View>
@@ -147,6 +150,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "white",
     marginBottom: 25,
+    fontWeight: "bold"
   },
   icon: {
     color: "gold",

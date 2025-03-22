@@ -1,53 +1,17 @@
-import {
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  Image,
-} from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
+import {
+  positionMap,
+  departmentMap,
+  typeOfRequestMap,
+} from "../../constants/enums";
 
-const HRRequestItem = ({
-  reqId,
-  reqEmployeeId,
-  reqHrReviewerId,
-  reqType,
-  reqStatus,
-  reqSubmittedDate,
-  reqReviewedDate,
-  reqDetails,
-  reqComments,
-  //-------------------
-  empName,
-  empImage,
-  empDepartment,
-  empPosition,
-}) => {
+const HRRequestItem = ({ request, employee }) => {
   const navigation = useNavigation();
   return (
     <TouchableOpacity
-      onPress={() =>
-        navigation.navigate("HRRequestDetails", {
-          request: {
-            id: reqId,
-            employeeId: reqEmployeeId,
-            type: reqType,
-            status: reqStatus,
-            submittedDate: reqSubmittedDate,
-            reviewedDate: reqReviewedDate,
-            details: reqDetails,
-            comments: reqComments,
-            hrReviewerId: reqHrReviewerId,
-          },
-          employee: {
-            name: empName,
-            image: empImage,
-            department: empDepartment,
-            position: empPosition,
-          },
-        })
-      }
+      onPress={() => navigation.navigate("HRRequestDetails", { request, employee })}
     >
       <View
         style={{
@@ -60,7 +24,7 @@ const HRRequestItem = ({
           justifyContent: "center",
           padding: 10,
           borderBottomWidth: 1,
-          borderBottomColor: "#001D3D"
+          borderBottomColor: "#001D3D",
         }}
       >
         <View
@@ -78,7 +42,17 @@ const HRRequestItem = ({
               justifyContent: "center",
             }}
           >
-            <Image source={{ uri: empImage }} width={50} height={50} />
+            <Image
+              source={
+                employee.profilePicture
+                  ? { uri: employee.profilePicture }
+                  : require("../../../assets/profile.png")
+              }
+              style={{
+                width: 40,
+                height: 40,
+              }}
+            />
           </View>
         </View>
         <View flex={9}>
@@ -98,7 +72,7 @@ const HRRequestItem = ({
                 fontFamily: "Roboto",
               }}
             >
-              {empName}
+              {employee.firstName} {employee.lastName}
             </Text>
             <Text
               style={{
@@ -108,7 +82,7 @@ const HRRequestItem = ({
                 fontFamily: "Roboto",
               }}
             >
-              {reqSubmittedDate}
+              {new Date(request.createdAt).toLocaleDateString()}
             </Text>
           </View>
 
@@ -120,16 +94,22 @@ const HRRequestItem = ({
               fontFamily: "Roboto",
             }}
           >
-            {empDepartment} - {empPosition}
+            {employee.department != null
+              ? departmentMap[employee?.department]
+              : "Unknown Department"}{" "}
+            -{" "}
+            {employee.position != null
+              ? positionMap[employee?.position]
+              : "Unknown Department"}
           </Text>
           <Text
             style={{
-              color: "orange",
+              color: request?.typeOfRequest === 0 ? "#4CAF50" : "orange",
               fontSize: 16,
               fontWeight: "bold",
             }}
           >
-            ● {reqType}
+            ● {typeOfRequestMap[request?.typeOfRequest]}
           </Text>
         </View>
       </View>

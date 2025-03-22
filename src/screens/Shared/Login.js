@@ -17,6 +17,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
 import { useMutation } from "@tanstack/react-query";
 import { login } from "../../api/auth";
+import { StatusBar } from "expo-status-bar";
 
 const Login = ({ setIsAuth, setRole }) => {
   const [userInfo, setUserInfo] = useState({});
@@ -50,10 +51,10 @@ const Login = ({ setIsAuth, setRole }) => {
       <View
         style={{
           flex: 1,
-          borderRadius: 10,
           width: "100%",
-          borderBottomLeftRadius: 60,
-          borderBottomRightRadius: 60,
+          borderRadius: 30,
+          borderBottomLeftRadius: 30,
+          borderBottomRightRadius: 30,
           overflow: "hidden",
           justifyContent: "center",
         }}
