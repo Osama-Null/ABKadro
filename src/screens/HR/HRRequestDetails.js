@@ -10,6 +10,8 @@ import {
   ActivityIndicator,
 } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
+import * as FileSystem from "expo-file-system"; // For file downloading
+import * as Sharing from "expo-sharing"; // For sharing the file
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   typeOfRequestMap,
@@ -93,6 +95,37 @@ const HRRequestDetails = ({ route }) => {
     }
   };
 
+  // Format File Name Function
+  const formatFileName = (fileName) => {
+    if (!fileName) return "Unknown File";
+    const parts = fileName.split(".");
+    if (parts.length < 2) return fileName; // No extension
+    const name = parts[0];
+    const extension = parts.slice(1).join(".");
+    if (name.length > 4) {
+      return `${name.substring(0, 4)}***.${extension}`;
+    } else {
+      return fileName;
+    }
+  };
+
+  // Download and Share File Function
+  const downloadAndShareFile = async (fileUrl, fileName) => {
+    try {
+      // Step 1: Download to a temporary location
+      const tempUri = `${FileSystem.cacheDirectory}${fileName}`;
+      const { uri } = await FileSystem.downloadAsync(fileUrl, tempUri);
+      console.log("File downloaded to:", uri);
+
+      // Step 2: Open the share dialog
+      await Sharing.shareAsync(uri);
+      // The user can now choose to save the file wherever they want
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Failed to download or share the file.");
+    }
+  };
+
   // Handle Action Selection
   const handleActionSelect = (action) => {
     setSelectedAction(action);
@@ -115,16 +148,11 @@ const HRRequestDetails = ({ route }) => {
   const handleViewFile = (fileArray) => {
     const file = fileArray[0]; // Get the first file from the array
     const baseUrl = "http://192.168.1.104:5208"; // Replace with your backend server’s IP address
-    const filename = file.filePath.split(/[\\/]/).pop(); // Extract filename, handling both \ and /
+    const filename = file.filePath.split(/[\\/]/).pop(); // Extract filename
     const fileUrl = `${baseUrl}/files/${filename}`; // Construct the full URL
-
-    console.log("Viewing file at:", fileUrl); // Debug log
-    console.log("File type:", file.fileType); // Check file type
-
-    // Determine file type if not provided
     const fileType = file.fileType || getFileTypeFromExtension(filename);
 
-    setSelectedFile({ ...file, uri: fileUrl, fileType }); // Update state with URL and type
+    setSelectedFile({ ...file, uri: fileUrl, fileType, fileName: file.fileName });
     setIsViewingFile(true); // Open modal
   };
 
@@ -305,12 +333,48 @@ const HRRequestDetails = ({ route }) => {
                 overflow: "hidden",
               }}
             >
-              <BlurView intensity={50}>
-                <Text style={styles.infoText}>
-                  Start Date: {new Date(request.startDate).toLocaleDateString()}
+              <BlurView
+                intensity={50}
+                style={{
+                  flexDirection: "row",
+                  gap: 10,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 16,
+                    fontWeight: "bold",
+                  }}
+                >
+                  {new Date(request.startDate).toLocaleDateString()}
                 </Text>
-                <Text style={styles.infoText}>
-                  End Date: {new Date(request.endDate).toLocaleDateString()}
+                <View
+                  style={{
+                    transform: [{ rotate: "90deg" }],
+                    width: 25,
+                    height: 25,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <Entypo
+                    name="flow-line"
+                    size={24}
+                    color="orange"
+                    alignSelf="center"
+                  />
+                </View>
+                <Text
+                  style={{
+                    color: "white",
+                    fontSize: 16,
+                    fontWeight: "bold",
+                  }}
+                >
+                  {new Date(request.endDate).toLocaleDateString()}
                 </Text>
               </BlurView>
             </View>
@@ -321,7 +385,7 @@ const HRRequestDetails = ({ route }) => {
           <View>
             <Text style={styles.label}>Submitted Files:</Text>
             {request.messages.map((msg, index) =>
-              msg.files ? (
+              msg.files && msg.files.length > 0 ? (
                 <TouchableOpacity
                   key={index}
                   style={{
@@ -330,7 +394,7 @@ const HRRequestDetails = ({ route }) => {
                     borderWidth: 0.5,
                     borderColor: "orange",
                   }}
-                  onPress={() => handleViewFile(msg.files)} // Trigger file viewing
+                  onPress={() => handleViewFile(msg.files)}
                 >
                   <BlurView
                     intensity={50}
@@ -357,7 +421,7 @@ const HRRequestDetails = ({ route }) => {
                           marginVertical: 2,
                         }}
                       >
-                        {msg.files.name || "File " + (index + 1)}
+                        {formatFileName(msg.files[0].fileName)}
                       </Text>
                     </View>
                     <FontAwesome name="file-text" size={24} color="orange" />
@@ -506,6 +570,14 @@ const HRRequestDetails = ({ route }) => {
             <Text style={styles.errorText}>File not found.</Text>
           )}
           <TouchableOpacity
+            style={styles.downloadButton}
+            onPress={() =>
+              selectedFile && downloadAndShareFile(selectedFile.uri, selectedFile.fileName)
+            }
+          >
+            <Ionicons name="download" size={30} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity
             style={styles.closeButton}
             onPress={() => setIsViewingFile(false)}
           >
@@ -517,7 +589,7 @@ const HRRequestDetails = ({ route }) => {
   );
 };
 
-// Styles (unchanged)
+// Updated Styles
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: "#001D3D" },
   header: {
@@ -588,6 +660,12 @@ const styles = StyleSheet.create({
   modalWebView: {
     width: "100%",
     height: "80%",
+  },
+  downloadButton: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+    zIndex: 10,
   },
   closeButton: {
     position: "absolute",
