@@ -6,6 +6,8 @@ import {
   Image,
   StyleSheet,
   TextInput,
+  Modal,
+  ActivityIndicator,
 } from "react-native";
 import * as DocumentPicker from "expo-document-picker";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -22,6 +24,8 @@ import { BlurView } from "expo-blur";
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Entypo from "@expo/vector-icons/Entypo";
+import { Image as ExpoImage } from "expo-image"; // For image viewing
+import { WebView } from "react-native-webview"; // For PDF viewing
 
 const HRRequestDetails = ({ route }) => {
   const navigation = useNavigation();
@@ -33,6 +37,8 @@ const HRRequestDetails = ({ route }) => {
   const [showActionDropdown, setShowActionDropdown] = useState(false);
   const [descriptionBody, setDescriptionBody] = useState("");
   const [files, setFiles] = useState([]);
+  const [selectedFile, setSelectedFile] = useState(null); // Track the file to view
+  const [isViewingFile, setIsViewingFile] = useState(false); // Control modal visibility
 
   // Mutation Setup
   const {
@@ -103,6 +109,34 @@ const HRRequestDetails = ({ route }) => {
 
   const handleRemoveFile = (index) => {
     setFiles(files.filter((_, i) => i !== index));
+  };
+
+  // Handle File Viewing
+  const handleViewFile = (fileArray) => {
+    const file = fileArray[0]; // Get the first file from the array
+    const baseUrl = "http://192.168.1.104:5208"; // Replace with your backend server’s IP address
+    const filename = file.filePath.split(/[\\/]/).pop(); // Extract filename, handling both \ and /
+    const fileUrl = `${baseUrl}/files/${filename}`; // Construct the full URL
+
+    console.log("Viewing file at:", fileUrl); // Debug log
+    console.log("File type:", file.fileType); // Check file type
+
+    // Determine file type if not provided
+    const fileType = file.fileType || getFileTypeFromExtension(filename);
+
+    setSelectedFile({ ...file, uri: fileUrl, fileType }); // Update state with URL and type
+    setIsViewingFile(true); // Open modal
+  };
+
+  // Fallback to determine file type from extension
+  const getFileTypeFromExtension = (filename) => {
+    const extension = filename.split(".").pop().toLowerCase();
+    if (["jpg", "jpeg", "png", "gif"].includes(extension)) {
+      return "image/" + extension;
+    } else if (extension === "pdf") {
+      return "application/pdf";
+    }
+    return "application/octet-stream"; // Default type
   };
 
   // Handle Submit
@@ -188,19 +222,25 @@ const HRRequestDetails = ({ route }) => {
                 flexDirection: "row",
               }}
             >
-              <Text style={{
-                color: "orange",
-                fontSize: 18,
-                marginVertical: 2,
-                alignSelf: "center",
-                fontWeight:"bold"
-              }}>Type:</Text>
-              <Text style={{
-                color: "white",
-                fontSize: 16,
-                marginVertical: 2,
-                alignSelf: "center",
-              }}>
+              <Text
+                style={{
+                  color: "orange",
+                  fontSize: 18,
+                  marginVertical: 2,
+                  alignSelf: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Type:
+              </Text>
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 16,
+                  marginVertical: 2,
+                  alignSelf: "center",
+                }}
+              >
                 {typeOfRequestMap[request.typeOfRequest]}
               </Text>
             </BlurView>
@@ -220,19 +260,25 @@ const HRRequestDetails = ({ route }) => {
                 flexDirection: "row",
               }}
             >
-              <Text style={{
-                color: "orange",
-                fontSize: 18,
-                marginVertical: 2,
-                alignSelf: "center",
-                fontWeight:"bold"
-              }}>Status:</Text>
-              <Text style={{
-                color: "white",
-                fontSize: 16,
-                marginVertical: 2,
-                alignSelf: "center",
-              }}>
+              <Text
+                style={{
+                  color: "orange",
+                  fontSize: 18,
+                  marginVertical: 2,
+                  alignSelf: "center",
+                  fontWeight: "bold",
+                }}
+              >
+                Status:
+              </Text>
+              <Text
+                style={{
+                  color: "white",
+                  fontSize: 16,
+                  marginVertical: 2,
+                  alignSelf: "center",
+                }}
+              >
                 {request.typeOfRequest === 0
                   ? vacationStatusMap[request.requestStatus]
                   : complaintStatusMap[request.complaintStatus]}
@@ -243,9 +289,16 @@ const HRRequestDetails = ({ route }) => {
 
         {request.typeOfRequest === 0 && (
           <>
-            <Text style={{
-              color: "white", fontSize: 16, marginBottom: 0, fontWeight: "bold"
-            }}>Date:</Text>
+            <Text
+              style={{
+                color: "white",
+                fontSize: 16,
+                marginBottom: 0,
+                fontWeight: "bold",
+              }}
+            >
+              Date:
+            </Text>
             <View
               style={{
                 borderRadius: 5,
@@ -258,7 +311,7 @@ const HRRequestDetails = ({ route }) => {
                 </Text>
                 <Text style={styles.infoText}>
                   End Date: {new Date(request.endDate).toLocaleDateString()}
-                </Text>{" "}
+                </Text>
               </BlurView>
             </View>
           </>
@@ -270,12 +323,14 @@ const HRRequestDetails = ({ route }) => {
             {request.messages.map((msg, index) =>
               msg.files ? (
                 <TouchableOpacity
+                  key={index}
                   style={{
                     borderRadius: 5,
                     overflow: "hidden",
                     borderWidth: 0.5,
                     borderColor: "orange",
                   }}
+                  onPress={() => handleViewFile(msg.files)} // Trigger file viewing
                 >
                   <BlurView
                     intensity={50}
@@ -296,7 +351,6 @@ const HRRequestDetails = ({ route }) => {
                     >
                       <Entypo name="attachment" size={20} color="orange" />
                       <Text
-                        key={index}
                         style={{
                           color: "orange",
                           fontSize: 16,
@@ -306,7 +360,6 @@ const HRRequestDetails = ({ route }) => {
                         {msg.files.name || "File " + (index + 1)}
                       </Text>
                     </View>
-
                     <FontAwesome name="file-text" size={24} color="orange" />
                   </BlurView>
                 </TouchableOpacity>
@@ -424,11 +477,47 @@ const HRRequestDetails = ({ route }) => {
           {mutationError.message || "Failed to update request."}
         </Text>
       )}
+
+      {/* Modal for File Viewing */}
+      <Modal
+        visible={isViewingFile}
+        onRequestClose={() => setIsViewingFile(false)}
+        animationType="slide"
+      >
+        <View style={styles.modalContainer}>
+          {selectedFile ? (
+            selectedFile.fileType?.includes("image") ? (
+              <ExpoImage
+                source={{ uri: selectedFile.uri }}
+                style={styles.modalImage}
+                contentFit="contain"
+              />
+            ) : (
+              <WebView
+                source={{ uri: selectedFile.uri }}
+                style={styles.modalWebView}
+                startInLoadingState={true}
+                renderLoading={() => (
+                  <ActivityIndicator size="large" color="#ffffff" />
+                )}
+              />
+            )
+          ) : (
+            <Text style={styles.errorText}>File not found.</Text>
+          )}
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => setIsViewingFile(false)}
+          >
+            <Ionicons name="close" size={30} color="white" />
+          </TouchableOpacity>
+        </View>
+      </Modal>
     </View>
   );
 };
 
-// Styles
+// Styles (unchanged)
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: "#001D3D" },
   header: {
@@ -451,7 +540,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginVertical: 2,
     alignSelf: "center",
-    fontWeight:"bold"
+    fontWeight: "bold",
   },
   actionButton: { padding: 10, backgroundColor: "#333", borderRadius: 5 },
   actionButtonText: { color: "white", fontSize: 16 },
@@ -485,6 +574,26 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: "center",
     marginTop: 20,
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: "#001D3D",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalImage: {
+    width: "100%",
+    height: "80%",
+  },
+  modalWebView: {
+    width: "100%",
+    height: "80%",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 40,
+    right: 20,
+    zIndex: 10,
   },
 });
 
