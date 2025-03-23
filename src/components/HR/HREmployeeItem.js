@@ -9,7 +9,7 @@ const HREmployeeItem = ({ employee }) => {
 
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate("HREmployeeDetails", employee)}
+      onPress={() => navigation.navigate("HREmployeeDetails", {employee})}
       style={styles.card}
     >
       <View flexDirection={"row"}>

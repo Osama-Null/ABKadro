@@ -125,7 +125,7 @@ const HRAllEmployee = () => {
                   style={{
                     justifyContent: "center",
                     alignItems: "center",
-                    gap: 5,
+                    gap: 7,
                     marginRight: 2,
                   }}
                 >

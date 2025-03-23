@@ -53,7 +53,12 @@ const HRHome = () => {
   const myProfile = profileQuery.data;
   const position = positionMap[myProfile.position] || "Unknown";
   const requests = requestsQuery?.data;
-  console.log("status: ", requests.length, requests[0].typeOfRequest, requests[1].typeOfRequest);
+  console.log(
+    "status: ",
+    requests.length,
+    requests[0].typeOfRequest,
+    requests[1].typeOfRequest
+  );
 
   // For debugging
   console.log(
@@ -82,10 +87,12 @@ const HRHome = () => {
     (req) => req.requestStatus === 0 || req.complaintStatus === 0
   ).length;
 
-  const totalLeave = requests.filter((req) => req.typeOfRequest === 0).length;
+  const totalLeave = requests.filter(
+    (req) => req.typeOfRequest === 0 && req.requestStatus === 0
+  ).length;
 
   const totalComplaints = requests.filter(
-    (req) => req.typeOfRequest === 1
+    (req) => req.typeOfRequest === 1 && req.complaintStatus === 0
   ).length;
 
   const totalAccepted = requests.filter(
@@ -223,33 +230,32 @@ const HRHome = () => {
                     gap: 50,
                   }}
                 >
-                  <Text
-                    style={{
-                      color: "white",
-                      fontSize: 20,
-                    }}
-                  >
+                  <View flexDirection={"row"} gap={5}>
                     <FontAwesome5
                       name="umbrella-beach"
                       size={20}
                       color={"orange"}
                     />
-
-                    {totalLeave}
-                  </Text>
-                  <Text
-                    style={{
-                      color: "white",
-                      fontSize: 20,
-                    }}
-                  >
-                    <Octicons
-                      name="report"
-                      size={20}
-                      color={"orange"}
-                    />{" "}
-                    {totalComplaints}
-                  </Text>
+                    <Text
+                      style={{
+                        color: "white",
+                        fontSize: 20,
+                      }}
+                    >
+                      {totalLeave}
+                    </Text>
+                  </View>
+                  <View flexDirection={"row"} gap={5}>
+                    <Text
+                      style={{
+                        color: "white",
+                        fontSize: 20,
+                      }}
+                    >
+                      <Octicons name="report" size={20} color={"orange"} />{" "}
+                      {totalComplaints}
+                    </Text>
+                  </View>
                 </View>
               </View>
               <View

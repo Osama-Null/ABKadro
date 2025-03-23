@@ -13,11 +13,18 @@ import {
   typeOfRequestMap,
   vacationStatusMap,
   complaintStatusMap,
+  departmentMap,
+  positionMap,
 } from "../../constants/enums.js";
 import { respondToRequest } from "../../api/admins.js";
 import { useMutation } from "@tanstack/react-query";
+import { BlurView } from "expo-blur";
+import { useNavigation } from "@react-navigation/native";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import Entypo from "@expo/vector-icons/Entypo";
 
 const HRRequestDetails = ({ route }) => {
+  const navigation = useNavigation();
   const { request, employee } = route.params || {};
   console.log("\n\nRequest Details: ", request, "\n\n");
 
@@ -57,13 +64,8 @@ const HRRequestDetails = ({ route }) => {
   }
 
   // Action Options Based on Request Type
-  const vacationActions = [
-    "Approve",
-    "Reject",
-    "Request Documents",
-    "Request More Information",
-  ];
-  const complaintActions = ["Mark as Resolved", "Return for Response"];
+  const vacationActions = ["Approve", "Reject", "Request Documents"];
+  const complaintActions = ["Resolved", "Return for Response"];
   const actions =
     request.typeOfRequest === 0 ? vacationActions : complaintActions;
 
@@ -78,7 +80,7 @@ const HRRequestDetails = ({ route }) => {
       return vacationEnum[action];
     } else {
       const complaintEnum = {
-        "Mark as Resolved": 2,
+        Resolved: 2,
         "Return for Response": 1,
       };
       return complaintEnum[action];
@@ -122,6 +124,17 @@ const HRRequestDetails = ({ route }) => {
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        style={{
+          position: "absolute",
+          top: 20,
+          left: 20,
+          zIndex: 999,
+        }}
+        onPress={() => navigation.goBack()}
+      >
+        <Ionicons name="arrow-back" size={30} color="white" />
+      </TouchableOpacity>
       {/* Header */}
       <Text style={styles.header}>Request Details</Text>
 
@@ -139,38 +152,164 @@ const HRRequestDetails = ({ route }) => {
           <Text style={styles.employeeName}>
             {employee?.firstName} {employee?.lastName}
           </Text>
+          <Text
+            style={{
+              fontSize: 15,
+              color: "white",
+            }}
+          >
+            {departmentMap[employee?.department]} -{" "}
+            {positionMap[employee?.position]}
+          </Text>
         </View>
       </View>
 
       {/* Request Info */}
       <View style={styles.requestInfo}>
-        <Text style={styles.infoText}>
-          Type: {typeOfRequestMap[request.typeOfRequest]}
-        </Text>
-        <Text style={styles.infoText}>
-          Status:{" "}
-          {request.typeOfRequest === 0
-            ? vacationStatusMap[request.requestStatus]
-            : complaintStatusMap[request.complaintStatus]}
-        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 10,
+          }}
+        >
+          <View
+            style={{
+              borderRadius: 5,
+              overflow: "hidden",
+              flex: 1,
+            }}
+          >
+            <BlurView
+              intensity={50}
+              style={{
+                padding: 10,
+                gap: 20,
+                flexDirection: "row",
+              }}
+            >
+              <Text style={{
+                color: "orange",
+                fontSize: 18,
+                marginVertical: 2,
+                alignSelf: "center",
+                fontWeight:"bold"
+              }}>Type:</Text>
+              <Text style={{
+                color: "white",
+                fontSize: 16,
+                marginVertical: 2,
+                alignSelf: "center",
+              }}>
+                {typeOfRequestMap[request.typeOfRequest]}
+              </Text>
+            </BlurView>
+          </View>
+          <View
+            style={{
+              borderRadius: 5,
+              overflow: "hidden",
+              flex: 1,
+            }}
+          >
+            <BlurView
+              intensity={50}
+              style={{
+                padding: 10,
+                gap: 20,
+                flexDirection: "row",
+              }}
+            >
+              <Text style={{
+                color: "orange",
+                fontSize: 18,
+                marginVertical: 2,
+                alignSelf: "center",
+                fontWeight:"bold"
+              }}>Status:</Text>
+              <Text style={{
+                color: "white",
+                fontSize: 16,
+                marginVertical: 2,
+                alignSelf: "center",
+              }}>
+                {request.typeOfRequest === 0
+                  ? vacationStatusMap[request.requestStatus]
+                  : complaintStatusMap[request.complaintStatus]}
+              </Text>
+            </BlurView>
+          </View>
+        </View>
+
         {request.typeOfRequest === 0 && (
           <>
-            <Text style={styles.infoText}>
-              Start Date: {new Date(request.startDate).toLocaleDateString()}
-            </Text>
-            <Text style={styles.infoText}>
-              End Date: {new Date(request.endDate).toLocaleDateString()}
-            </Text>
+            <Text style={{
+              color: "white", fontSize: 16, marginBottom: 0, fontWeight: "bold"
+            }}>Date:</Text>
+            <View
+              style={{
+                borderRadius: 5,
+                overflow: "hidden",
+              }}
+            >
+              <BlurView intensity={50}>
+                <Text style={styles.infoText}>
+                  Start Date: {new Date(request.startDate).toLocaleDateString()}
+                </Text>
+                <Text style={styles.infoText}>
+                  End Date: {new Date(request.endDate).toLocaleDateString()}
+                </Text>{" "}
+              </BlurView>
+            </View>
           </>
         )}
+
         {request.messages && request.messages.length > 0 && (
           <View>
             <Text style={styles.label}>Submitted Files:</Text>
             {request.messages.map((msg, index) =>
               msg.files ? (
-                <Text key={index} style={styles.infoText}>
-                  {msg.files.name || "File " + (index + 1)}
-                </Text>
+                <TouchableOpacity
+                  style={{
+                    borderRadius: 5,
+                    overflow: "hidden",
+                    borderWidth: 0.5,
+                    borderColor: "orange",
+                  }}
+                >
+                  <BlurView
+                    intensity={50}
+                    style={{
+                      flexDirection: "row",
+                      padding: 5,
+                      justifyContent: "space-between",
+                      paddingHorizontal: 10,
+                    }}
+                  >
+                    <View
+                      style={{
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 10,
+                        flexDirection: "row",
+                      }}
+                    >
+                      <Entypo name="attachment" size={20} color="orange" />
+                      <Text
+                        key={index}
+                        style={{
+                          color: "orange",
+                          fontSize: 16,
+                          marginVertical: 2,
+                        }}
+                      >
+                        {msg.files.name || "File " + (index + 1)}
+                      </Text>
+                    </View>
+
+                    <FontAwesome name="file-text" size={24} color="orange" />
+                  </BlurView>
+                </TouchableOpacity>
               ) : null
             )}
           </View>
@@ -178,14 +317,29 @@ const HRRequestDetails = ({ route }) => {
       </View>
 
       {/* Action Dropdown */}
-      <TouchableOpacity
-        style={styles.actionButton}
-        onPress={() => setShowActionDropdown(!showActionDropdown)}
+      <Text style={styles.label}>Action</Text>
+      <BlurView
+        intensity={50}
+        style={{
+          borderRadius: 5,
+          overflow: "hidden",
+        }}
       >
-        <Text style={styles.actionButtonText}>
-          {selectedAction || "Select Action"}
-        </Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: 10,
+          }}
+          onPress={() => setShowActionDropdown(!showActionDropdown)}
+        >
+          <Text style={styles.actionButtonText}>
+            {selectedAction || "Select Action"}
+          </Text>
+        </TouchableOpacity>
+      </BlurView>
+
       {showActionDropdown && (
         <View style={styles.dropdownMenu}>
           {actions.map((action) => (
@@ -200,14 +354,44 @@ const HRRequestDetails = ({ route }) => {
         </View>
       )}
 
+      {/* Description Input */}
+      <View style={styles.fieldContainer}>
+        <Text style={styles.label}>Add a Comment (Optional)</Text>
+        <TextInput
+          style={styles.descriptionInput}
+          placeholder="Enter your comment here..."
+          placeholderTextColor="#rgba(0, 0, 0, 0.48)"
+          value={descriptionBody}
+          onChangeText={setDescriptionBody}
+          multiline
+          numberOfLines={4}
+        />
+      </View>
+
       {/* File Upload */}
       <View style={styles.fieldContainer}>
-        <Text style={styles.label}>Attach Files</Text>
-        <TouchableOpacity style={styles.fileUpload} onPress={handleFileSelect}>
-          <Text style={styles.fileUploadText}>
-            Upload Files ({files.length} selected)
-          </Text>
-        </TouchableOpacity>
+        <BlurView
+          intensity={50}
+          style={{
+            borderRadius: 5,
+            overflow: "hidden",
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              padding: 10,
+              justifyContent: "center",
+            }}
+            onPress={handleFileSelect}
+          >
+            <Text style={styles.fileUploadText}>
+              Upload Files ({files.length} selected)
+            </Text>
+          </TouchableOpacity>
+        </BlurView>
+
         {files.length > 0 && (
           <View style={styles.selectedFilesContainer}>
             <Text style={styles.selectedFilesLabel}>Selected Files:</Text>
@@ -221,20 +405,6 @@ const HRRequestDetails = ({ route }) => {
             ))}
           </View>
         )}
-      </View>
-
-      {/* Description Input */}
-      <View style={styles.fieldContainer}>
-        <Text style={styles.label}>Add a Comment (Optional)</Text>
-        <TextInput
-          style={styles.descriptionInput}
-          placeholder="Enter your comment here..."
-          placeholderTextColor="#ccc"
-          value={descriptionBody}
-          onChangeText={setDescriptionBody}
-          multiline
-          numberOfLines={4}
-        />
       </View>
 
       {/* Submit Button */}
@@ -263,33 +433,37 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: "#001D3D" },
   header: {
     fontWeight: "bold",
-    fontSize: 30,
+    fontSize: 25,
     color: "white",
     marginBottom: 20,
+    alignSelf: "center",
   },
   employeeContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
   },
-  profileImage: { width: 60, height: 60, borderRadius: 50, marginRight: 10 },
-  employeeName: { color: "white", fontSize: 24, fontWeight: "bold" },
-  requestInfo: { marginBottom: 20 },
-  infoText: { color: "white", fontSize: 16, marginVertical: 2 },
+  profileImage: { width: 50, height: 50, borderRadius: 50, marginRight: 10 },
+  employeeName: { color: "white", fontSize: 20, fontWeight: "bold" },
+  requestInfo: { marginBottom: 20, gap: 10 },
+  infoText: {
+    color: "white",
+    fontSize: 16,
+    marginVertical: 2,
+    alignSelf: "center",
+    fontWeight:"bold"
+  },
   actionButton: { padding: 10, backgroundColor: "#333", borderRadius: 5 },
   actionButtonText: { color: "white", fontSize: 16 },
   dropdownMenu: {
-    position: "absolute",
-    top: 220,
-    left: 20,
-    backgroundColor: "#333",
+    backgroundColor: "#0F4277",
     borderRadius: 5,
-    zIndex: 10,
+    marginTop: 5,
   },
   dropdownItem: { padding: 10 },
   dropdownItemText: { color: "white", fontSize: 16 },
-  fieldContainer: { marginVertical: 20 },
-  label: { color: "white", fontSize: 16, marginBottom: 5 },
+  fieldContainer: { marginVertical: 15 },
+  label: { color: "white", fontSize: 16, marginBottom: 5, fontWeight: "bold" },
   fileUpload: { padding: 10, backgroundColor: "#444", borderRadius: 5 },
   fileUploadText: { color: "white", fontSize: 16 },
   selectedFilesContainer: { marginTop: 10 },
@@ -299,12 +473,11 @@ const styles = StyleSheet.create({
   submitButton: { padding: 15, backgroundColor: "#007AFF", borderRadius: 5 },
   submitButtonText: { color: "white", fontSize: 16, textAlign: "center" },
   descriptionInput: {
-    backgroundColor: "#333",
-    color: "white",
+    backgroundColor: "white",
+    color: "black",
     padding: 10,
     borderRadius: 5,
     fontSize: 16,
-    height: 100,
     textAlignVertical: "top",
   },
   errorText: {

@@ -46,7 +46,7 @@ const AllReqHistoryItem = ({ request }) => {
     <TouchableOpacity
       style={styles.itemContainer}
       onPress={
-        () => navigation.navigate("RequestDetails", { request }) // Adjust navigation target as needed
+        () => navigation.navigate("ReqHistoryDetails", { request }) // Adjust navigation target as needed
       }
     >
       {/* Type & Info */}

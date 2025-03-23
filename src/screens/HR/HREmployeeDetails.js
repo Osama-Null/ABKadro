@@ -13,45 +13,42 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import requests from "../../data/requests"; // Import requests data
-import { getEmployeeDetails } from "../../api/admins";
+import { getAllRequests, getEmployeeDetails } from "../../api/admins";
+import { useQuery } from "@tanstack/react-query";
+import { departmentMap, positionMap } from "../../constants/enums";
+import HRRequestItem from "../../components/HR/HRRequestItem";
+import { BlurView } from "expo-blur";
+import EmployeeMyRequestItem from "../../components/Employee/EmployeeMyRequestItem";
+import LottieView from "lottie-react-native";
 
-const HREmployeeDetails = () => {
+const HREmployeeDetails = ({ route }) => {
   const navigation = useNavigation();
-  const route = useRoute();
-  const { employeeId } = route.params; // Expecting employeeId from navigation
+  const { employee } = route.params; // Expecting employeeId from navigation
+  console.log("My id: ", employee?.id);
 
-  // Fetch employee details
-  const {
-    data: employee,
-    isLoading,
-    error,
-  } = useQuery({
-    queryKey: ["employeeDetails", employeeId],
-    queryFn: () => getEmployeeDetails(employeeId),
+  // API
+  const requestsQuery = useQuery({
+    queryKey: ["fetchAllRequests"],
+    queryFn: () => getAllRequests(),
   });
 
-  if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <Text style={{ color: "white", textAlign: "center", marginTop: 20 }}>
-          Loading...
-        </Text>
-      </View>
-    );
+  // Handle loading & error states
+  if (requestsQuery.isLoading) {
+    return <Text style={styles.loadingText}>Loading...</Text>;
+  }
+  if (requestsQuery.isError) {
+    console.log("Error fetching requests: ", requestsQuery.error);
+    return <Text style={styles.errorText}>Error fetching data</Text>;
   }
 
-  if (error) {
-    return (
-      <View style={styles.container}>
-        <Text style={{ color: "red", textAlign: "center", marginTop: 20 }}>
-          Error: {error.message}
-        </Text>
-      </View>
-    );
-  }
+  const requests = requestsQuery?.data
+    .filter((request) => request.employeeId === employee.id)
+    .map((req) => <EmployeeMyRequestItem key={req.requestId} request={req} />);
+
   return (
     <View style={styles.container}>
       {/* Header Section with Employee Details */}
+
       <View style={styles.headerContainer}>
         <TouchableOpacity
           style={styles.backButton}
@@ -60,13 +57,30 @@ const HREmployeeDetails = () => {
           <Ionicons name="arrow-back" size={30} color="white" />
         </TouchableOpacity>
 
-        <Image source={{ uri: employee.image }} style={styles.profileImage} />
-        <Text style={styles.name}>{employee.name}</Text>
-        <Text style={styles.position}>{employee.position}</Text>
-        <Text style={styles.department}>{employee.department}</Text>
+        <Image
+          source={
+            employee.profilePicture
+              ? { uri: employee.profilePicture }
+              : require("../../../assets/profile.png")
+          }
+          style={{
+            width: 100,
+            height: 100,
+            borderRadius: 50,
+            marginBottom: 10,
+          }}
+        />
+        <Text style={styles.name}>
+          {employee.firstName} {employee.lastName}
+        </Text>
+        <Text style={styles.position}>{positionMap[employee.position]}</Text>
+        <Text style={styles.department}>
+          {departmentMap[employee.department]}
+        </Text>
       </View>
 
       {/* Contact Information Section */}
+
       <View
         style={{
           width: "100%",
@@ -79,7 +93,7 @@ const HREmployeeDetails = () => {
           <MaterialIcons
             name="email"
             size={20}
-            color={"gold"}
+            color={"orange"}
             style={styles.icon}
           />
           <Text
@@ -89,17 +103,12 @@ const HREmployeeDetails = () => {
             }}
           >
             {"   "}
-            {employeeContact.email}
+            {employee.email}
           </Text>
         </View>
-        <View flexDirection={"row"} gap={50}>
+        <View flexDirection={"row"} gap={80}>
           <View flexDirection={"row"}>
-            <FontAwesome
-              name="phone"
-              size={20}
-              color={"gold"}
-              style={styles.icon}
-            />
+            <MaterialIcons name="event-available" size={20} color={"orange"} />
             <Text
               style={{
                 color: "white",
@@ -107,16 +116,11 @@ const HREmployeeDetails = () => {
               }}
             >
               {"   "}
-              {employeeContact.phone}
+              {employee.vacationDays}
             </Text>
           </View>
           <View flexDirection={"row"}>
-            <AntDesign
-              name="star"
-              size={20}
-              color={"gold"}
-              style={styles.icon}
-            />
+            <MaterialIcons name="sick" size={20} color={"orange"} />
             <Text
               style={{
                 color: "white",
@@ -124,36 +128,42 @@ const HREmployeeDetails = () => {
               }}
             >
               {"   "}
-              {employee.rating}/5
+              {employee.sickDays}
             </Text>
           </View>
         </View>
       </View>
 
       {/* Requests Section */}
-      <View style={styles.requestsContainer}>
-        <Text style={styles.requestsTitle}>Employee Requests</Text>
-        {employeeRequests.length > 0 ? (
-          <ScrollView>
-            {employeeRequests.map((req) => (
-              <TouchableOpacity
-                key={req.id}
-                style={styles.requestItem}
-                onPress={() =>
-                  navigation.navigate("RequestDetails", { request: req })
-                }
-              >
-                <Text style={styles.requestText}>Type: {req.type}</Text>
-                <Text style={styles.requestText}>Status: {req.status}</Text>
-                <Text style={styles.requestText}>
-                  Submitted: {req.submittedDate}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        ) : (
-          <Text style={styles.noRequestsText}>No requests found.</Text>
-        )}
+      <View
+        style={{
+          flex: 1,
+          width: "100%",
+          alignSelf: "center",
+          borderRadius: 40,
+          overflow: "hidden",
+          marginBottom: "5%",
+        }}
+      >
+        <BlurView
+          intensity="50"
+          style={{
+            flex: 1,
+            width: "100%",
+            padding: 15,
+          }}
+        >
+          {requests.length > 0 ? (
+            <ScrollView style={{ flex: 1 }}>{requests}</ScrollView>
+          ) : (
+            <LottieView
+              source={require("../../../assets/Animation_Ghost.json")}
+              autoPlay
+              loop={true}
+              style={{ width: 200, height: 200, alignSelf: "center", marginTop: 90 }} // Adjust size
+            />
+          )}
+        </BlurView>
       </View>
     </View>
   );

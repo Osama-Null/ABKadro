@@ -61,7 +61,6 @@ const Login = ({ setIsAuth, setRole }) => {
       >
         <BlurView intensity={60} style={styles.blurContainer}>
           <FontAwesome5 name="user-alt" size={80} color="gold" />
-          <Image />
         </BlurView>
       </View>
 
