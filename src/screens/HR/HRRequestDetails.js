@@ -24,6 +24,7 @@ import { respondToRequest } from "../../api/admins.js";
 import { useMutation } from "@tanstack/react-query";
 import { BlurView } from "expo-blur";
 import { useNavigation } from "@react-navigation/native";
+import { useQueryClient } from "@tanstack/react-query";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Entypo from "@expo/vector-icons/Entypo";
 import { Image as ExpoImage } from "expo-image"; // For image viewing
@@ -43,6 +44,7 @@ const HRRequestDetails = ({ route }) => {
   const [isViewingFile, setIsViewingFile] = useState(false); // Control modal visibility
 
   // Mutation Setup
+  const queryClient = useQueryClient();
   const {
     mutate,
     isLoading,
@@ -55,6 +57,10 @@ const HRRequestDetails = ({ route }) => {
     onSuccess: (data) => {
       console.log("Request updated:", data);
       alert("Request updated successfully!");
+      // Invalidate all queries to refetch data across all screens
+      queryClient.invalidateQueries(); // No specific key = refetch all queries
+      // Redirect to home screen
+      navigation.navigate("HRHome");
     },
     onError: (error) => {
       console.error("Error:", error);
@@ -147,12 +153,17 @@ const HRRequestDetails = ({ route }) => {
   // Handle File Viewing
   const handleViewFile = (fileArray) => {
     const file = fileArray[0]; // Get the first file from the array
-    const baseUrl = "http://192.168.1.104:5208"; // Replace with your backend server’s IP address
+    const baseUrl = "http://192.168.2.32:5208"; // Replace with your backend server’s IP address
     const filename = file.filePath.split(/[\\/]/).pop(); // Extract filename
     const fileUrl = `${baseUrl}/files/${filename}`; // Construct the full URL
     const fileType = file.fileType || getFileTypeFromExtension(filename);
 
-    setSelectedFile({ ...file, uri: fileUrl, fileType, fileName: file.fileName });
+    setSelectedFile({
+      ...file,
+      uri: fileUrl,
+      fileType,
+      fileName: file.fileName,
+    });
     setIsViewingFile(true); // Open modal
   };
 
@@ -572,7 +583,8 @@ const HRRequestDetails = ({ route }) => {
           <TouchableOpacity
             style={styles.downloadButton}
             onPress={() =>
-              selectedFile && downloadAndShareFile(selectedFile.uri, selectedFile.fileName)
+              selectedFile &&
+              downloadAndShareFile(selectedFile.uri, selectedFile.fileName)
             }
           >
             <Ionicons name="download" size={30} color="white" />

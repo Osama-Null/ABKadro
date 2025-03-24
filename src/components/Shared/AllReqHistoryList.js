@@ -27,7 +27,7 @@ const AllReqHistoryList = () => {
       return request.requestStatus === 2 || request.requestStatus === 3;
     } else if (request.typeOfRequest === 1) {
       // Complaint: Resolved (2)
-      return request.requestStatus === 2;
+      return request.complaintStatus === 2;
     }
     return false;
   });

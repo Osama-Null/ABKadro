@@ -6,14 +6,18 @@ import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { deleteToken } from "../../api/storage";
+import { deleteRole, deleteToken } from "../../api/storage";
+import UserContext from "../../context/UserContext";
 
 const ProfileInfo = ({ route }) => {
   const navigation = useNavigation();
   const myProfile = route.params;
+  const { setIsAuth } = useContext(UserContext);
   console.log("See me👀: ", myProfile);
 
   const handleLogout = async () => {
+    console.log("Logging out...");
+    await deleteRole();
     await deleteToken();
     setIsAuth(false);
   };
@@ -150,7 +154,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: "white",
     marginBottom: 25,
-    fontWeight: "bold"
+    fontWeight: "bold",
   },
   icon: {
     color: "gold",
